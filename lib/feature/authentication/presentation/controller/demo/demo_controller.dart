@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:easy_english/base/presentation/speech_to_text.dart';
+import 'package:easy_english/base/presentation/text_to_speech.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -16,7 +18,11 @@ class DemoController extends GetxController {
   RxString textApi = ''.obs;
   final formKey = GlobalKey<FormBuilderState>();
   final phomeTextEditingController = TextEditingController();
+  final memoTextEditingController = TextEditingController();
   final passwordTextEditingController = TextEditingController();
+
+  final speechToText = CommonSpeechToText();
+  final textToSpeech = CommonTextToSpeech();
 
   void onTap() {
     _getDataUserUsecase.execute(
@@ -32,5 +38,19 @@ class DemoController extends GetxController {
         },
       ),
     );
+  }
+
+  void onTapSpeechToText() {
+    speechToText.listen(
+      (text) => {phomeTextEditingController.text = text},
+    );
+  }
+
+  void onTapTextToSpeech() {
+    textToSpeech.speech(memoTextEditingController.text);
+  }
+
+  void onTapTextToSpeechStop() {
+    textToSpeech.stop();
   }
 }
