@@ -24,8 +24,7 @@ class DemoPage extends GetWidget<DemoController> {
           centerTitle: true,
           leading: null,
         ),
-        body: Stack(
-          alignment: AlignmentDirectional.bottomStart,
+        body: Column(
           children: [
             FormBuilder(
               key: controller.formKey,
@@ -33,6 +32,13 @@ class DemoPage extends GetWidget<DemoController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
+                  CommonTextField(
+                    formKey: controller.formKey,
+                    type: FormFieldType.memo,
+                    controller: controller.memoTextEditingController,
+                    onTap: null,
+                    onChanged: (_) {},
+                  ),
                   CommonTextField(
                     formKey: controller.formKey,
                     type: FormFieldType.phone,
@@ -55,7 +61,7 @@ class DemoPage extends GetWidget<DemoController> {
               ),
             ),
             SizedBox(
-              height: Get.height,
+              height: 100,
               width: Get.width,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -63,7 +69,7 @@ class DemoPage extends GetWidget<DemoController> {
                 children: [
                   CupertinoButton(
                     onPressed: controller.onTap,
-                    child: const Text('Test API'),
+                    child: const Text('API'),
                   ),
                   Obx(() => Text(controller.textApi.value)),
                 ],
@@ -71,17 +77,46 @@ class DemoPage extends GetWidget<DemoController> {
             ),
             SizedBox(
               height: 100,
-              child: Stack(
-                alignment: AlignmentDirectional.bottomCenter,
+              width: Get.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CustomPaint(
-                    size: Size(size.width, 80),
-                    painter: BNBCustomPainter(),
+                  CupertinoButton(
+                    onPressed: controller.onTapTextToSpeech,
+                    child: const Text('Text To Speech'),
                   ),
-                  Positioned(
-                    bottom: 15,
-                    child: CupertinoButton(child: Assets.images.addIcon.image(scale: 3), onPressed: () {}),
-                  )
+                  Obx(() => Text(controller.textApi.value)),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 100,
+              width: Get.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CupertinoButton(
+                    onPressed: controller.onTapTextToSpeechStop,
+                    child: const Text('Text To Speech Stop'),
+                  ),
+                  Obx(() => Text(controller.textApi.value)),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 100,
+              width: Get.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CupertinoButton(
+                    onPressed: controller.onTapSpeechToText,
+                    child: const Text('Speech To Text'),
+                  ),
+                  Obx(() => Text(controller.textApi.value)),
                 ],
               ),
             ),
@@ -89,29 +124,5 @@ class DemoPage extends GetWidget<DemoController> {
         ),
       ),
     );
-  }
-}
-
-class BNBCustomPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill;
-    Path path = Path()..moveTo(0, 20);
-    path.quadraticBezierTo(size.width * 0.2, 0, size.width * 0.35, 0);
-    path.quadraticBezierTo(size.width * 0.4, 0, size.width * 0.4, 20);
-    path.arcToPoint(Offset(size.width * 0.6, 20), radius: const Radius.circular(10), clockwise: false);
-    path.quadraticBezierTo(size.width * 0.6, 0, size.width * 0.65, 0);
-    path.quadraticBezierTo(size.width * 0.8, 0, size.width, 20);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
   }
 }
