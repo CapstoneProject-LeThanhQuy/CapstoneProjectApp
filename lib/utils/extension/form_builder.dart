@@ -5,8 +5,11 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 typedef MyFormFieldState = FormBuilderFieldState<FormBuilderField<dynamic>, dynamic>;
 
 enum FormFieldType {
+  name,
+  emailOrPhone,
   phone,
   password,
+  confirmPassword,
   memo,
 }
 
@@ -15,8 +18,6 @@ extension FormFieldTypeExtension on FormFieldType {
     switch (this) {
       case FormFieldType.phone:
         return 'Số điện thoại';
-      case FormFieldType.password:
-        return 'Mật khẩu';
       case FormFieldType.memo:
         return '';
       default:
@@ -26,6 +27,14 @@ extension FormFieldTypeExtension on FormFieldType {
 
   String get hintText {
     switch (this) {
+      case FormFieldType.name:
+        return 'Họ và tên';
+      case FormFieldType.emailOrPhone:
+        return 'Your email or phone number';
+      case FormFieldType.password:
+        return 'Your password';
+      case FormFieldType.confirmPassword:
+        return 'Confirm Password';
       case FormFieldType.phone:
         return '0123456789';
       default:
@@ -55,6 +64,18 @@ extension FormFieldTypeExtension on FormFieldType {
   FormFieldValidator<String?>? validator() {
     List<FormFieldValidator<String?>> validators = [];
     switch (this) {
+      case FormFieldType.emailOrPhone:
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống nội dung'),
+          FormBuilderValidators.maxLength(35, errorText: 'Email hoặc số điện thoại tối đa 35 ký tự'),
+        ];
+        break;
+      case FormFieldType.name:
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống họ và tên của bạn'),
+          FormBuilderValidators.maxLength(25, errorText: 'Họ và tên tối đa 25 ký tự'),
+        ];
+        break;
       case FormFieldType.phone:
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống số điện thoại'),
@@ -63,9 +84,10 @@ extension FormFieldTypeExtension on FormFieldType {
         ];
         break;
       case FormFieldType.password:
+      case FormFieldType.confirmPassword:
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống mật khẩu'),
-          FormBuilderValidators.minLength(8, errorText: 'Mật khẩu tối thiểu 8 ký tự'),
+          FormBuilderValidators.minLength(8, errorText: 'Mật khẩu bao gồm tối thiểu 8 ký tự chữ và số'),
         ];
         break;
       case FormFieldType.memo:

@@ -50,7 +50,7 @@ class DemoController extends GetxController {
     textToSpeech.speech(memoTextEditingController.text);
   }
 
-  void onTapTextToSpeechStop() {
-    textToSpeech.stop();
-  }
+  // void onTapTextToSpeechStop() {
+  //   textToSpeech.stop();
+  // }
 }

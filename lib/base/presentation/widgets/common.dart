@@ -1,3 +1,4 @@
+import 'package:easy_english/base/presentation/base_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,11 +25,11 @@ Widget commonBackButton({void Function()? onPressed}) {
     },
     child: Row(
       children: [
-        Assets.images.backIcon.image(width: 8),
+        Assets.images.backIcon.image(width: 8, color: ColorName.primaryColor),
         const SizedBox(width: 10),
         Text(
-          'Back',
-          style: AppTextStyle.w600s13(ColorName.green4c8),
+          'Quay lại',
+          style: AppTextStyle.w500s13(ColorName.primaryColor),
         ),
       ],
     ),
@@ -52,9 +53,9 @@ Widget commonCloseButton({void Function()? onPressed}) {
 }
 
 @swidget
-Widget loadingWidget() {
-  return const Center(
-    child: CupertinoActivityIndicator(color: ColorName.black000),
+Widget loadingWidget({Color? color}) {
+  return Center(
+    child: CupertinoActivityIndicator(color: color ?? ColorName.primaryColor),
   );
 }
 
@@ -89,6 +90,7 @@ Widget commonTextField(
   bool obscureText = false,
   bool isEnable = true,
   int? maxLines = 1,
+  bool autofocus = false,
   String? initialValue,
   TextEditingController? controller,
   TextInputAction? textInputAction = TextInputAction.next,
@@ -112,6 +114,7 @@ Widget commonTextField(
             final FocusNode focusNode = Focus.of(context);
             final bool hasFocus = focusNode.hasFocus;
             return FormBuilderTextField(
+              autofocus: autofocus,
               scrollPadding: const EdgeInsets.all(36.0),
               maxLines: maxLines,
               initialValue: initialValue,
@@ -121,7 +124,7 @@ Widget commonTextField(
               textAlignVertical: TextAlignVertical.center,
               textInputAction: textInputAction,
               obscureText: obscureText,
-              cursorColor: ColorName.blue007,
+              cursorColor: ColorName.primaryColor,
               cursorWidth: 1.5,
               controller: ctl,
               enabled: isEnable,
@@ -129,7 +132,7 @@ Widget commonTextField(
                 errorMaxLines: 2,
                 isDense: true,
                 labelText: type.labelText,
-                labelStyle: const TextStyle(fontSize: 11),
+                labelStyle: AppTextStyle.w700s14(ColorName.primaryColor),
                 alignLabelWithHint: true,
                 filled: true,
                 fillColor: hasFocus ? ColorName.whiteFff : ColorName.grayF8f,
@@ -139,23 +142,23 @@ Widget commonTextField(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 16),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: ColorName.gray838, width: 0.5),
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: ColorName.blue007, width: 1),
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderSide: const BorderSide(color: ColorName.primaryColor, width: 1),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: ColorName.redFf3, width: 1),
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: ColorName.redFf3, width: 1),
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(color: ColorName.gray838, width: 0.5),
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 suffixIcon: suffixIcon == null
                     ? null
@@ -204,6 +207,153 @@ Widget commonTextField(
             );
           },
         ),
+      ),
+    ),
+  );
+}
+
+@swidget
+Widget commonDropDown({
+  required String title,
+  String? value,
+  void Function()? onPressed,
+  double height = 50,
+}) {
+  return CupertinoButton(
+    padding: EdgeInsets.zero,
+    onPressed: onPressed,
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 22),
+      height: height,
+      decoration: BoxDecoration(
+        color: value != null ? ColorName.whiteFff : ColorName.grayF8f,
+        border: Border.all(color: ColorName.gray838, width: 0.5),
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const SizedBox(width: 13),
+          Text(
+            value ?? title,
+            style: AppTextStyle.w400s11(value != null ? ColorName.black000 : ColorName.gray838),
+          ),
+          const Spacer(),
+          const Icon(Icons.keyboard_arrow_down, color: ColorName.black000),
+          const SizedBox(width: 13),
+        ],
+      ),
+    ),
+  );
+}
+
+@swidget
+Widget commonButton({
+  required Widget child,
+  double? width,
+  double height = 44,
+  Function()? onPressed,
+  Color fillColor = ColorName.primaryColor,
+  Color? borderColor,
+  double borderWidth = 1,
+  BorderRadiusGeometry? borderRadius,
+  BaseState? state,
+  Color indicatorColor = Colors.white,
+}) {
+  return SizedBox(
+    width: width,
+    height: height,
+    child: CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: onPressed,
+      child: Container(
+        alignment: Alignment.center,
+        decoration: ShapeDecoration(
+          color: fillColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius ?? BorderRadius.circular(8),
+            side: BorderSide(
+              width: borderWidth,
+              color: borderColor ?? fillColor,
+            ),
+          ),
+        ),
+        child: state != null
+            ? state.widget(
+                onLoading: Center(
+                  child: CupertinoActivityIndicator(color: indicatorColor),
+                ),
+                onEmpty: child,
+              )
+            : child,
+      ),
+    ),
+  );
+}
+
+@swidget
+Widget commonBottomError({required String text}) {
+  return text.isEmpty
+      ? const SizedBox.shrink()
+      : Container(
+          padding: const EdgeInsets.all(11),
+          color: ColorName.redFf3,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.info,
+                color: Colors.white,
+                size: 13,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  text,
+                  style: AppTextStyle.w500s11(ColorName.whiteFff),
+                ),
+              ),
+            ],
+          ),
+        );
+}
+
+@swidget
+Widget commonBottomButton({
+  required String text,
+  Color fillColor = ColorName.primaryColor,
+  double pressedOpacity = 0.4,
+  Function()? onPressed,
+  BaseState? state,
+}) {
+  final textWidget = Padding(
+    padding: const EdgeInsets.only(bottom: 14),
+    child: Text(
+      text,
+      style: AppTextStyle.w600s15(ColorName.whiteFff),
+    ),
+  );
+  return SizedBox(
+    height: 80,
+    child: CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: onPressed,
+      pressedOpacity: pressedOpacity,
+      child: Container(
+        alignment: Alignment.center,
+        color: fillColor,
+        child: state != null
+            ? state.widget(
+                onEmpty: textWidget,
+                onLoading: const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 14.0),
+                    child: CupertinoActivityIndicator(color: Colors.white),
+                  ),
+                ),
+              )
+            : textWidget,
       ),
     ),
   );
