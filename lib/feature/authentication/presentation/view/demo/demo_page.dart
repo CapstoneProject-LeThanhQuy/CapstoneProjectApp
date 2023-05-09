@@ -97,10 +97,10 @@ class DemoPage extends GetWidget<DemoController> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CupertinoButton(
-                    onPressed: controller.onTapTextToSpeechStop,
-                    child: const Text('Text To Speech Stop'),
-                  ),
+                  // CupertinoButton(
+                  //   onPressed: controller.onTapTextToSpeechStop,
+                  //   child: const Text('Text To Speech Stop'),
+                  // ),
                   Obx(() => Text(controller.textApi.value)),
                 ],
               ),
