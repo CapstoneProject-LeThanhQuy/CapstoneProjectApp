@@ -6,6 +6,14 @@ import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter_tts/flutter_tts.dart';
 
 class CommonTextToSpeech {
+  static final CommonTextToSpeech _commonTextToSpeech = CommonTextToSpeech._internal();
+
+  factory CommonTextToSpeech() {
+    return _commonTextToSpeech;
+  }
+
+  CommonTextToSpeech._internal();
+
   late FlutterTts textToSpeech = FlutterTts();
   bool get isIOS => !kIsWeb && Platform.isIOS;
   bool get isAndroid => !kIsWeb && Platform.isAndroid;
@@ -63,7 +71,7 @@ class CommonTextToSpeech {
       await textToSpeech.speak(text);
     }
   }
-  
+
   Future stop() async {
     await textToSpeech.stop();
   }
