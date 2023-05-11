@@ -915,7 +915,7 @@ class RegisterController extends BaseController {
         behavior: HitTestBehavior.opaque,
         onTap: () {
           Get.back();
-          N.toHomePage();
+          N.toTabBar();
         },
         child: Scaffold(
           backgroundColor: Colors.transparent,

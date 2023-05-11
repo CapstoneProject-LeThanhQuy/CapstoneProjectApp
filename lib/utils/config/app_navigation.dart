@@ -26,7 +26,7 @@ class N {
     type.navigate(name: AppRoute.forgotPasswordOtp);
   }
 
-  static void toHomePage({RouteType type = RouteType.offAll}) {
-    type.navigate(name: AppRoute.home);
+  static void toTabBar({RouteType type = RouteType.offAll}) {
+    type.navigate(name: AppRoute.tabBar);
   }
 }
