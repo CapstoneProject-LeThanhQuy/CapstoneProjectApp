@@ -331,7 +331,7 @@ Widget commonBottomButton({
     padding: const EdgeInsets.only(bottom: 14),
     child: Text(
       text,
-      style: AppTextStyle.w600s15(ColorName.whiteFff),
+      style: AppTextStyle.w700s16(ColorName.whiteFff),
     ),
   );
   return SizedBox(

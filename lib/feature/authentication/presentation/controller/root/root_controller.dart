@@ -8,10 +8,10 @@ class RootController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    LocalStorage(); 
+    LocalStorage();
     Future.delayed(const Duration(seconds: 1)).whenComplete(() async {
       FlutterNativeSplash.remove();
-      N.toDemoPage();
+      N.toLandingPage();
     });
   }
 }
