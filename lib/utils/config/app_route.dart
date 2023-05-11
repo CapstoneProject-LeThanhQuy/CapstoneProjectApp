@@ -1,3 +1,5 @@
+import 'package:easy_english/base/presentation/tab_bar/tab_bar_bindings.dart';
+import 'package:easy_english/base/presentation/tab_bar/tab_bar_page.dart';
 import 'package:easy_english/feature/authentication/presentation/view/forgot_password/forgot_password_bindings.dart';
 import 'package:easy_english/feature/authentication/presentation/view/forgot_password/forgot_password_otp_page.dart';
 import 'package:easy_english/feature/authentication/presentation/view/forgot_password/forgot_password_page.dart';
@@ -24,6 +26,7 @@ class AppRoute {
   static String login = '/login';
   static String forgotPassword = '/forgotPassword';
   static String forgotPasswordOtp = '/forgotPasswordOtp';
+  static String tabBar = '/tabBar';
   static String home = '/home';
 
   static List<GetPage> generateGetPages = [
@@ -70,9 +73,9 @@ class AppRoute {
       transition: Transition.cupertino,
     ),
     GetPage(
-      name: home,
-      page: HomePage.new,
-      binding: HomeBindings(),
+      name: tabBar,
+      page: TabBarPage.new,
+      binding: TabBarBindings(),
       transition: Transition.fadeIn,
     ),
   ];

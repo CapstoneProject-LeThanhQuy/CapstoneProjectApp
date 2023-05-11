@@ -25,7 +25,7 @@ class LoginController extends BaseController {
     super.onInit();
     if (kDebugMode) {
       emailOrPhoneTextEditingController.text = '0384933379';
-      passwordTextEditingController.text = '123123';
+      passwordTextEditingController.text = '12312312';
     }
   }
 
@@ -57,6 +57,6 @@ class LoginController extends BaseController {
       passwordField,
     ].validateFormFields();
 
-    N.toHomePage();
+    N.toTabBar();
   }
 }
