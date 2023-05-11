@@ -1,5 +1,10 @@
+import 'package:easy_english/feature/authentication/presentation/view/forgot_password/forgot_password_bindings.dart';
+import 'package:easy_english/feature/authentication/presentation/view/forgot_password/forgot_password_otp_page.dart';
+import 'package:easy_english/feature/authentication/presentation/view/forgot_password/forgot_password_page.dart';
 import 'package:easy_english/feature/authentication/presentation/view/landing/landing_bindings.dart';
 import 'package:easy_english/feature/authentication/presentation/view/landing/landing_page.dart';
+import 'package:easy_english/feature/authentication/presentation/view/login/login_bindings.dart';
+import 'package:easy_english/feature/authentication/presentation/view/login/login_page.dart';
 import 'package:easy_english/feature/authentication/presentation/view/register/register_bindings.dart';
 import 'package:easy_english/feature/authentication/presentation/view/register/register_page.dart';
 import 'package:easy_english/feature/home/presentation/view/home/home_bindings.dart';
@@ -16,6 +21,9 @@ class AppRoute {
   static String demo = '/demo';
   static String landing = '/landing';
   static String register = '/register';
+  static String login = '/login';
+  static String forgotPassword = '/forgotPassword';
+  static String forgotPasswordOtp = '/forgotPasswordOtp';
   static String home = '/home';
 
   static List<GetPage> generateGetPages = [
@@ -41,6 +49,24 @@ class AppRoute {
       name: register,
       page: RegisterPage.new,
       binding: RegisterBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: login,
+      page: LoginPage.new,
+      binding: LoginBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: forgotPassword,
+      page: ForgotPasswordPage.new,
+      binding: ForgotPasswordBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: forgotPasswordOtp,
+      page: ForgotPasswordOtpPage.new,
+      binding: ForgotPasswordBindings(),
       transition: Transition.cupertino,
     ),
     GetPage(

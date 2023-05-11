@@ -11,6 +11,8 @@ enum FormFieldType {
   password,
   confirmPassword,
   memo,
+  loginEmailOrPhone,
+  loginPassword,
 }
 
 extension FormFieldTypeExtension on FormFieldType {
@@ -18,6 +20,10 @@ extension FormFieldTypeExtension on FormFieldType {
     switch (this) {
       case FormFieldType.phone:
         return 'Số điện thoại';
+      case FormFieldType.loginEmailOrPhone:
+        return 'Số điện thoại hoặc email';
+      case FormFieldType.loginPassword:
+        return 'Mật khẩu';
       case FormFieldType.memo:
         return '';
       default:
@@ -37,6 +43,10 @@ extension FormFieldTypeExtension on FormFieldType {
         return 'Confirm Password';
       case FormFieldType.phone:
         return '0123456789';
+      case FormFieldType.loginEmailOrPhone:
+        return '0123456789 hoặc sample@gmail.com';
+      case FormFieldType.loginPassword:
+        return 'Mật khẩu';
       default:
         return '';
     }
@@ -64,10 +74,28 @@ extension FormFieldTypeExtension on FormFieldType {
   FormFieldValidator<String?>? validator() {
     List<FormFieldValidator<String?>> validators = [];
     switch (this) {
+      case FormFieldType.loginEmailOrPhone:
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống số điện thoại hoặc email'),
+          FormBuilderValidators.maxLength(35, errorText: 'Số điện thoại hoặc email tối đa 35 ký tự'),
+          FormBuilderValidators.compose(
+            [
+              (val) {
+                final validNumber = RegExp(r'^[+|0]{1}[0-9]{9,11}$');
+                final emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+                return validNumber.hasMatch(val.toString().trim()) || emailValid.hasMatch(val.toString().trim())
+                    ? null
+                    : "Vui lòng nhập vào số điện thoại hoặc email của bạn";
+              },
+            ],
+          ),
+        ];
+        break;
       case FormFieldType.emailOrPhone:
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống nội dung'),
-          FormBuilderValidators.maxLength(35, errorText: 'Email hoặc số điện thoại tối đa 35 ký tự'),
+          FormBuilderValidators.maxLength(35, errorText: 'Số điện thoại hoặc email tối đa 35 ký tự'),
         ];
         break;
       case FormFieldType.name:
@@ -83,6 +111,7 @@ extension FormFieldTypeExtension on FormFieldType {
           FormBuilderValidators.maxLength(15, errorText: 'Số điện thoại tối đa 12 chữ số'),
         ];
         break;
+      case FormFieldType.loginPassword:
       case FormFieldType.password:
       case FormFieldType.confirmPassword:
         validators = [

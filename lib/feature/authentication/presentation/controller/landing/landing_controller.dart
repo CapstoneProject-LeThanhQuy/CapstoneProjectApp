@@ -5,4 +5,8 @@ class LandingController extends BaseController {
   void toRegiter() {
     N.toRegisterPage();
   }
+
+  void toLogin() {
+    N.toLoginPage();
+  }
 }

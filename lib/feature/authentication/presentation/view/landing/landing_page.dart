@@ -57,7 +57,9 @@ class LandingPage extends BaseWidget<LandingController> {
               height: 5,
             ),
             CupertinoButton(
-              onPressed: () {},
+              onPressed: () {
+                controller.toLogin();
+              },
               padding: EdgeInsets.zero,
               child: Text('Tôi đã có tài khoản', style: AppTextStyle.w700s16(ColorName.primaryColor)),
             ),
