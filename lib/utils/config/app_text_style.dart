@@ -123,12 +123,24 @@ class AppTextStyle {
     return _styleWith(FontWeight.w600, 25, color, height: height, letterSpacing: letterSpacing);
   }
 
+  static TextStyle w600s30(Color color, {double? height, double? letterSpacing}) {
+    return _styleWith(FontWeight.w600, 30, color, height: height, letterSpacing: letterSpacing);
+  }
+
   static TextStyle w600s33(Color color, {double? height, double? letterSpacing}) {
     return _styleWith(FontWeight.w600, 33, color, height: height, letterSpacing: letterSpacing);
   }
 
   static TextStyle w700s8(Color color, {double? height, double? letterSpacing}) {
     return _styleWith(FontWeight.w700, 8, color, height: height, letterSpacing: letterSpacing);
+  }
+
+  static TextStyle w700s10(Color color, {double? height, double? letterSpacing}) {
+    return _styleWith(FontWeight.w700, 10, color, height: height, letterSpacing: letterSpacing);
+  }
+
+  static TextStyle w700s11(Color color, {double? height, double? letterSpacing}) {
+    return _styleWith(FontWeight.w700, 11, color, height: height, letterSpacing: letterSpacing);
   }
 
   static TextStyle w700s14(Color color, {double? height, double? letterSpacing}) {
@@ -165,5 +177,9 @@ class AppTextStyle {
 
   static TextStyle w800s20(Color color, {double? height, double? letterSpacing}) {
     return _styleWith(FontWeight.w800, 20, color, height: height, letterSpacing: letterSpacing);
+  }
+
+  static TextStyle w600s35(Color color, {double? height, double? letterSpacing}) {
+    return _styleWith(FontWeight.w600, 35, color, height: height, letterSpacing: letterSpacing);
   }
 }

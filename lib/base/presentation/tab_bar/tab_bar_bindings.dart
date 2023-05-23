@@ -1,3 +1,4 @@
+import 'package:easy_english/base/domain/usecases/get_course_local_usecase.dart';
 import 'package:easy_english/feature/course/presentation/controller/course/course_controller.dart';
 import 'package:easy_english/feature/game/presentation/controller/game/game_controller.dart';
 import 'package:easy_english/feature/home/presentation/controller/home/home_controller.dart';
@@ -8,8 +9,10 @@ import './tab_bar_controller.dart';
 class TabBarBindings implements Bindings {
   @override
   void dependencies() {
+    Get.lazyPut(() => GetCourseLocalUsecase(Get.find()));
+
     Get.lazyPut(() => HomeController());
-    Get.lazyPut(() => CourseController());
+    Get.lazyPut(() => CourseController(Get.find()));
     Get.lazyPut(() => GameController());
     Get.lazyPut(() => SettingController());
     Get.put(TabBarController());

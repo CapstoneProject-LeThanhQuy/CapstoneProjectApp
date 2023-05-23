@@ -96,6 +96,18 @@ extension FormFieldTypeExtension on FormFieldType {
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống nội dung'),
           FormBuilderValidators.maxLength(35, errorText: 'Số điện thoại hoặc email tối đa 35 ký tự'),
+          FormBuilderValidators.compose(
+            [
+              (val) {
+                final validNumber = RegExp(r'^[+|0]{1}[0-9]{9,11}$');
+                final emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+                return validNumber.hasMatch(val.toString().trim()) || emailValid.hasMatch(val.toString().trim())
+                    ? null
+                    : "Vui lòng nhập vào số điện thoại hoặc email của bạn";
+              },
+            ],
+          ),
         ];
         break;
       case FormFieldType.name:
@@ -141,7 +153,7 @@ extension ListFormFieldState on List<MyFormFieldState> {
     final isValid = map((e) => e.validate()).reduce((v, e) => v && e);
     if (!isValid) {
       final errorMessage = map(
-        (e) => e.errorText == null ? null : '${e.decoration.labelText}: ${e.errorText}',
+        (e) => e.errorText == null ? null : '${e.errorText}',
       ).whereType<String>().toList().join('\n');
       throw Exception(errorMessage);
     }

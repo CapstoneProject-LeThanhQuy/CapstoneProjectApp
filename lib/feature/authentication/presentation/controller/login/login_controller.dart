@@ -49,14 +49,15 @@ class LoginController extends BaseController {
   }
 
   void onTapLogin() {
-    final fbs = formKey.formBuilderState!;
-    final emailOrPhoneField = FormFieldType.loginEmailOrPhone.field(fbs);
-    final passwordField = FormFieldType.loginPassword.field(fbs);
-    [
-      emailOrPhoneField,
-      passwordField,
-    ].validateFormFields();
-
-    N.toTabBar();
+    try {
+      final fbs = formKey.formBuilderState!;
+      final emailOrPhoneField = FormFieldType.loginEmailOrPhone.field(fbs);
+      final passwordField = FormFieldType.loginPassword.field(fbs);
+      [
+        emailOrPhoneField,
+        passwordField,
+      ].validateFormFields();
+      N.toTabBar();
+    } catch (e) {}
   }
 }

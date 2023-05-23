@@ -6,6 +6,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:easy_english/utils/extension/form_builder.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:get/route_manager.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../utils/config/app_text_style.dart';
 import '../../../utils/gen/assets.gen.dart';
@@ -25,11 +26,11 @@ Widget commonBackButton({void Function()? onPressed}) {
     },
     child: Row(
       children: [
-        Assets.images.backIcon.image(width: 8, color: ColorName.primaryColor),
+        Assets.images.backIcon.image(width: 8, color: ColorName.whiteFff),
         const SizedBox(width: 10),
         Text(
           'Quay lại',
-          style: AppTextStyle.w500s13(ColorName.primaryColor),
+          style: AppTextStyle.w500s13(ColorName.whiteFff),
         ),
       ],
     ),
@@ -55,7 +56,7 @@ Widget commonCloseButton({void Function()? onPressed}) {
 @swidget
 Widget loadingWidget({Color? color}) {
   return Center(
-    child: CupertinoActivityIndicator(color: color ?? ColorName.primaryColor),
+    child: SpinKitChasingDots(color: color ?? ColorName.primaryColor),
   );
 }
 

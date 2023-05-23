@@ -19,9 +19,18 @@ class VocabularyLocalRepoImp implements VocabularyLocalRepo {
   }
 
   @override
-  Future<List<VocabularyLocal>> getVocabularies(int courseID) async {
+  Future<List<VocabularyLocal>> getVocabulariesWithCourseId(int courseID) async {
     final database = await dbProvider.database;
     List<Map<String, dynamic>> allRows = await database.query('vocabulary', where: 'course_id = $courseID');
+    List<VocabularyLocal> vocabularies = allRows.map((course) => VocabularyLocal.fromMap(course)).toList();
+
+    return vocabularies;
+  }
+
+  @override
+  Future<List<VocabularyLocal>> getVocabulariesWithLevelId(int levelId) async {
+    final database = await dbProvider.database;
+    List<Map<String, dynamic>> allRows = await database.query('vocabulary', where: 'level_id = $levelId');
     List<VocabularyLocal> vocabularies = allRows.map((course) => VocabularyLocal.fromMap(course)).toList();
 
     return vocabularies;

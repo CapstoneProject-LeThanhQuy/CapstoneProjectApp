@@ -31,6 +31,9 @@
     <color name="green_459">#459f26</color>
     <color name="green_e8f">#E8F2C9</color>
     <color name="green_def">#DEF693</color>
+    <color name="green_d5e">#d5ebc8</color>
+    <color name="green_2ff">#2ffa65</color>
+    <color name="green_00f">#00ff40</color>
 
     <color name="blue_007">#007AFF</color>
 
@@ -44,4 +47,7 @@
     <color name="orange_ffe">#FFEBD3</color>
     <color name="orange_fa9">#FA9C2D</color>
     <color name="orange_ddb">#DDB27E</color>
+
+    <color name="purple_df8">#df80ff</color>
+    
 </resources>

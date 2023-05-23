@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:easy_english/base/data/local/repositories_imp/course_level_local_repo_imp.dart';
 import 'package:easy_english/base/data/local/repositories_imp/course_local_repo_imp.dart';
 import 'package:easy_english/base/data/local/repositories_imp/vocabulary_local_repo_imp.dart';
+import 'package:easy_english/base/domain/repositoties/course_level_local_repo.dart';
 import 'package:easy_english/base/domain/repositoties/course_local_repo.dart';
 import 'package:easy_english/base/domain/repositoties/vocabulary_local_repo.dart';
 import 'package:easy_english/feature/authentication/data/providers/remote/user_api.dart';
@@ -35,5 +37,6 @@ class AppBinding extends Bindings {
     Get.put<UserRepo>(UserRepoImpl());
     Get.put<VocabularyLocalRepo>(VocabularyLocalRepoImp());
     Get.put<CourseLocalRepo>(CourseLocalRepoImp());
+    Get.put<CourseLevelLocalRepo>(CourseLevelLocalRepoImp());
   }
 }
