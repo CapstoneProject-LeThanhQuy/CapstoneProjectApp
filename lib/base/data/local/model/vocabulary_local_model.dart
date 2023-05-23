@@ -2,35 +2,43 @@ class VocabularyLocal {
   int? id;
   String? englishText;
   String? vietnameseText;
-  int? times;
-  int? level;
+  String? image;
+  int? progress;
+  int? difficult;
   int? courseId;
+  int? levelId;
 
   VocabularyLocal({
     this.id,
     required this.englishText,
     required this.vietnameseText,
-    this.times,
-    required this.level,
+    required this.image,
+    required this.progress,
+    required this.difficult,
     required this.courseId,
+    required this.levelId,
   });
 
   VocabularyLocal.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     englishText = map['english_text'];
     vietnameseText = map['vietnamese_text'];
-    times = map['times'];
-    level = map['level'];
+    image = map['image'];
+    progress = map['progress'];
     courseId = map['course_id'];
+    levelId = map['level_id'];
+    difficult = map['difficult'];
   }
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       'english_text': englishText,
       'vietnamese_text': vietnameseText,
-      'times': times,
-      'level': level,
+      'image': image,
+      'progress': progress,
       'course_id': courseId,
+      'level_id': levelId,
+      'difficult': difficult,
     };
     return map;
   }

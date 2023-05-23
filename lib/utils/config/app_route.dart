@@ -9,8 +9,12 @@ import 'package:easy_english/feature/authentication/presentation/view/login/logi
 import 'package:easy_english/feature/authentication/presentation/view/login/login_page.dart';
 import 'package:easy_english/feature/authentication/presentation/view/register/register_bindings.dart';
 import 'package:easy_english/feature/authentication/presentation/view/register/register_page.dart';
-import 'package:easy_english/feature/home/presentation/view/home/home_bindings.dart';
-import 'package:easy_english/feature/home/presentation/view/home/home_page.dart';
+import 'package:easy_english/feature/course/presentation/view/course_detail/course_detail_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/course_detail/course_detail_page.dart';
+import 'package:easy_english/feature/course/presentation/view/course_vocabulary/course_vocabulary_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/course_vocabulary/course_vocabulary_page.dart';
+import 'package:easy_english/feature/course/presentation/view/learning/learning_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/learning/learning_page.dart';
 import 'package:get/route_manager.dart';
 
 import '../../../feature/authentication/presentation/view/demo/demo_bindings.dart';
@@ -27,7 +31,9 @@ class AppRoute {
   static String forgotPassword = '/forgotPassword';
   static String forgotPasswordOtp = '/forgotPasswordOtp';
   static String tabBar = '/tabBar';
-  static String home = '/home';
+  static String cousreDetail = '/cousreDetail';
+  static String cousreVocabulary = '/cousreVocabulary';
+  static String learning = '/learning';
 
   static List<GetPage> generateGetPages = [
     GetPage(
@@ -77,6 +83,24 @@ class AppRoute {
       page: TabBarPage.new,
       binding: TabBarBindings(),
       transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: cousreDetail,
+      page: CourseDetailPage.new,
+      binding: CourseDetailBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: cousreVocabulary,
+      page: CourseVocabularyPage.new,
+      binding: CourseVocabularyBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: learning,
+      page: LearningPage.new,
+      binding: LearningBindings(),
+      transition: Transition.cupertino,
     ),
   ];
 }

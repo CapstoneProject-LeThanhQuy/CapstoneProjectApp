@@ -29,7 +29,7 @@ class CommonTextToSpeech {
     });
     double volume = 1;
     double pitch = 1;
-    double rate = doubleInRange(0.45, 0.55);
+    double rate = doubleInRange(0.35, 0.45);
     if (voices.isEmpty) {
       textToSpeech.getVoices.then((value) {
         if (value != null) {

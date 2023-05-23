@@ -32,26 +32,48 @@ class LocalStorage {
   }
 
   List<String> course = [
-    'name TEXT NOT NULL',
+    'title TEXT NOT NULL',
+    'image TEXT NOT NULL',
+    'learned_words INTEGER NOT NULL',
     'total_words INTEGER NOT NULL',
-    'max_level INTEGER NOT NULL',
+    'point INTEGER DEFAULT 0',
+    'progress INTEGER NOT NULL',
+    'member INTEGER NOT NULL',
+  ];
+
+  List<String> courseLevel = [
+    'level INTEGER NOT NULL',
+    'title TEXT NOT NULL',
+    'learned_words INTEGER NOT NULL',
+    'total_words INTEGER NOT NULL',
+    'course_id INTEGER NOT NULL',
   ];
 
   List<String> vocabulary = [
     'english_text TEXT NOT NULL',
     'vietnamese_text TEXT NOT NULL',
-    'times INTEGER DEFAULT 0',
-    'level INTEGER NOT NULL',
+    'image TEXT NOT NULL',
+    'progress INTEGER DEFAULT 0',
+    'difficult INTEGER DEFAULT 0',
     'course_id INTEGER NOT NULL',
+    'level_id INTEGER NOT NULL',
   ];
   _onCreate(Database database, int version) async {
     //tạo database
+
     var courseQuery = "CREATE TABLE course (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
     for (var element in course) {
       courseQuery += ", $element";
     }
     courseQuery += ");";
     await database.execute(courseQuery);
+
+    var courseLevelQuery = "CREATE TABLE course_level (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
+    for (var element in courseLevel) {
+      courseLevelQuery += ", $element";
+    }
+    courseLevelQuery += ");";
+    await database.execute(courseLevelQuery);
 
     var vocabularyQuery = "CREATE TABLE vocabulary (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
     for (var element in vocabulary) {
