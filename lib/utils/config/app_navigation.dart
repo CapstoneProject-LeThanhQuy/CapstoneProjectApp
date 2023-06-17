@@ -1,6 +1,8 @@
 import 'package:easy_english/feature/course/data/models/course.dart';
 import 'package:easy_english/feature/course/data/models/course_level.dart';
+import 'package:easy_english/feature/course/data/models/course_model.dart';
 import 'package:easy_english/feature/course/data/models/vocabulary.dart';
+import 'package:easy_english/feature/course/presentation/controller/preview_image/preview_image_controller.dart';
 
 import '../extension/route_type.dart';
 import 'app_route.dart';
@@ -44,5 +46,33 @@ class N {
 
   static void toLearningPage({RouteType type = RouteType.to, required List<Vocabulary> vocabularies}) {
     type.navigate(name: AppRoute.learning, arguments: vocabularies);
+  }
+
+  static void toCreateCoursePage({RouteType type = RouteType.to}) {
+    type.navigate(name: AppRoute.createCourse);
+  }
+
+  static void toCreateVocabulary({RouteType type = RouteType.offAndTo, required CourseModel courseModel}) {
+    type.navigate(name: AppRoute.createVocabulary, arguments: courseModel);
+  }
+
+  static void toPreviewImage({RouteType type = RouteType.to, required ImagePreviewitem previewImageItem}) {
+    type.navigate(name: AppRoute.previewImage, arguments: previewImageItem);
+  }
+
+  static void toHomeCourseDetail({RouteType type = RouteType.to, required CourseModel courseModel}) {
+    type.navigate(name: AppRoute.homeCourseDetail, arguments: courseModel);
+  }
+
+  static void toVocabularyDetail({RouteType type = RouteType.to, required Vocabulary vocabulary}) {
+    type.navigate(name: AppRoute.vocabularyDetail, arguments: vocabulary);
+  }
+
+  static void toLearnDifficultWord({RouteType type = RouteType.to, required List<Vocabulary> vocabularies}) {
+    type.navigate(name: AppRoute.learnDifficultWord, arguments: vocabularies);
+  }
+
+  static void toLearningDifficult({RouteType type = RouteType.to, required Vocabulary vocabulary}) {
+    type.navigate(name: AppRoute.learningDifficult, arguments: vocabulary);
   }
 }

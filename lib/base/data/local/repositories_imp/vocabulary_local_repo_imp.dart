@@ -1,7 +1,9 @@
 import 'package:easy_english/base/data/local/local_storage.dart';
 import 'package:easy_english/base/data/local/model/vocabulary_local_model.dart';
 import 'package:easy_english/base/domain/repositoties/vocabulary_local_repo.dart';
+import 'package:easy_english/feature/course/data/models/vocabulary.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sqflite/sqflite.dart';
 
 class VocabularyLocalRepoImp implements VocabularyLocalRepo {
   final dbProvider = LocalStorage();
@@ -34,5 +36,27 @@ class VocabularyLocalRepoImp implements VocabularyLocalRepo {
     List<VocabularyLocal> vocabularies = allRows.map((course) => VocabularyLocal.fromMap(course)).toList();
 
     return vocabularies;
+  }
+
+  @override
+  Future<bool> updateVocabularyDifficult(Vocabulary vocabulary) async {
+    try {
+      final database = await dbProvider.database;
+      Batch batch = database.batch();
+
+      batch.rawUpdate(
+        'UPDATE vocabulary SET difficult = ? WHERE id = ?',
+        [
+          0,
+          vocabulary.id,
+        ],
+      );
+
+      await batch.commit();
+      return true;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      return false;
+    }
   }
 }

@@ -1,9 +1,19 @@
+import 'package:easy_english/base/domain/usecases/get_vocabularies_withlevel_local_usecase.dart';
+import 'package:easy_english/feature/course/domain/usecases/get_all_course_usecase.dart';
 import 'package:easy_english/feature/home/presentation/controller/home/home_controller.dart';
 import 'package:get/get.dart';
 
 class HomeBindings implements Bindings {
   @override
   void dependencies() {
-    Get.put(HomeController());
+    Get.lazyPut(() => GetAllCourseUsecase(Get.find()));
+    Get.lazyPut(() => GetAllCourseUsecase(Get.find()));
+    Get.lazyPut(() => GetVocabulariesWithCourseLocalUsecase(Get.find()));
+    Get.put(HomeController(
+      Get.find(),
+      Get.find(),
+      Get.find(),
+      Get.find(),
+    ));
   }
 }

@@ -42,27 +42,14 @@ Widget targetItem({required Target target}) {
                     padding: EdgeInsets.zero,
                     onPressed: () {},
                     child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: ColorName.whiteFaf,
-                        boxShadow: [
-                          BoxShadow(
-                            color: ColorName.black333.withOpacity(0.5),
-                            blurRadius: 15.0,
-                            offset: const Offset(3, 4),
-                          ),
-                        ],
+                        border: Border.all(width: 2, color: ColorName.black000),
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: ColorName.orangeDdb.withOpacity(0.7),
-                        ),
-                        child: Text(
-                          'Chỉnh sửa mục tiêu',
-                          style: AppTextStyle.w500s13(ColorName.primaryColor, letterSpacing: 0.6),
-                        ),
+                      child: Text(
+                        'Chỉnh sửa mục tiêu',
+                        style: AppTextStyle.w500s13(ColorName.primaryColor, letterSpacing: 0.6),
                       ),
                     ),
                   ),
@@ -85,7 +72,7 @@ Widget targetItem({required Target target}) {
                         Positioned.fill(
                           child: CircularProgressIndicator(
                             strokeWidth: 10,
-                            value: 0.4,
+                            value: (target.learnedWords + target.newWords) / target.targetWord,
                             color: ColorName.primaryColor.withOpacity(0.8),
                             semanticsLabel: 'Linear progress indicator',
                           ),

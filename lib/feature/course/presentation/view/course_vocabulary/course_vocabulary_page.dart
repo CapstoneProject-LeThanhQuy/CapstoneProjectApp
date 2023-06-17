@@ -1,9 +1,9 @@
 import 'package:easy_english/base/presentation/base_app_bar.dart';
 import 'package:easy_english/base/presentation/base_widget.dart';
-import 'package:easy_english/feature/course/data/models/vocabulary.dart';
 import 'package:easy_english/feature/course/presentation/controller/course_vocabulary/course_vocabulary_controller.dart';
 import 'package:easy_english/base/presentation/widgets/common.dart';
 import 'package:easy_english/feature/course/presentation/view/course_vocabulary/widgets/widget.dart';
+import 'package:easy_english/utils/config/app_navigation.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/gen/assets.gen.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
@@ -40,7 +40,7 @@ class CourseVocabularyPage extends BaseWidget<CourseVocabularyController> {
                             const SizedBox(width: 25),
                             Center(
                               child: Text(
-                                '${controller.input.level}',
+                                '${controller.courseLevel?.level}',
                                 style: AppTextStyle.w700s20(ColorName.black000),
                               ),
                             ),
@@ -55,11 +55,11 @@ class CourseVocabularyPage extends BaseWidget<CourseVocabularyController> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      controller.input.title,
+                                      controller.courseLevel?.title ?? '',
                                       style: AppTextStyle.w700s17(ColorName.primaryColor),
                                     ),
                                     Text(
-                                      '${controller.input.learnedWords}/${controller.input.totalWords} từ',
+                                      '${controller.courseLevel?.learnedWords}/${controller.courseLevel?.totalWords} từ',
                                       style: AppTextStyle.w500s15(ColorName.black4d4),
                                     ),
                                   ],
@@ -79,7 +79,9 @@ class CourseVocabularyPage extends BaseWidget<CourseVocabularyController> {
                           itemBuilder: (context, index) {
                             return CourseVocabularyItem(
                               vocabulary: controller.vocabularies[index],
-                              onPressed: () {},
+                              onPressed: () {
+                                N.toVocabularyDetail(vocabulary: controller.vocabularies[index]);
+                              },
                             );
                           },
                         ),
@@ -98,9 +100,9 @@ class CourseVocabularyPage extends BaseWidget<CourseVocabularyController> {
                       child: CommonButton(
                         height: 50,
                         onPressed: controller.learnNewWord,
-                        fillColor: ColorName.primaryColor,
+                        fillColor: controller.vocabularies.isEmpty ? ColorName.gray828 : ColorName.primaryColor,
                         child: Text(
-                          'Học từ mới',
+                          controller.isHasNewWord.value ? 'Học từ mới' : 'Ôn tập',
                           style: AppTextStyle.w700s18(ColorName.whiteFff),
                         ),
                       ),

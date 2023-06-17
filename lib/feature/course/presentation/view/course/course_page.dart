@@ -7,6 +7,8 @@ import 'package:easy_english/utils/config/app_navigation.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'widgets/widget.dart';
 
@@ -17,88 +19,199 @@ class CoursePage extends BaseWidget<CourseController> {
   Widget onBuild(BuildContext context) {
     return Obx(
       () {
+        if (!controller.isLoading1.value && !controller.isLoading2.value && !controller.isLoading2.value) {
+          controller.refreshController.refreshCompleted();
+        }
         return Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: ColorName.grayEce,
           body: Column(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 25),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        const SizedBox(height: 25),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Các khóa học đã được tạo',
-                            style: AppTextStyle.w600s15(ColorName.green27b),
+                child: SmartRefresher(
+                  scrollController: controller.scrollController,
+                  enablePullDown: true,
+                  controller: controller.refreshController,
+                  onRefresh: controller.onRefresh,
+                  onLoading: controller.onLoading,
+                  header: const WaterDropMaterialHeader(
+                    backgroundColor: ColorName.primaryColor,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const SizedBox(height: 25),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Các khóa học đã được tạo',
+                              style: AppTextStyle.w600s15(ColorName.green27b),
+                            ),
                           ),
-                        ),
-                        ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            return CourseItem(
-                              course: Course(1, 'Từ vựng TOEIC cơ bản - QUYLT TOEIC', '', 1500, 1500, 100, 100),
-                              onPressed: () {},
-                              typeCourse: TypeCourse.myCourse,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 25),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Các Khóa học Đã Được Tải Về',
-                            style: AppTextStyle.w600s15(ColorName.blue007),
+                          if (controller.myCourses.isEmpty && !controller.isLoading2.value)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Chưa có khóa học nào được tạo',
+                                    style: AppTextStyle.w600s15(ColorName.black000),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: controller.myCourses.length,
+                            itemBuilder: (context, index) {
+                              return CourseItem(
+                                course: controller.myCourses[index],
+                                onPressed: () {
+                                  controller.toCourseUpdate(index);
+                                },
+                                typeCourse: TypeCourse.myCourse,
+                              );
+                            },
                           ),
-                        ),
-                        ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: controller.courses.length,
-                          itemBuilder: (context, index) {
-                            return CourseItem(
-                              course: controller.courses[index],
-                              onPressed: () {
-                                AppConfig.currentCourse = controller.courses[index];
-                                N.toCousreDetailPage(
-                                  course: controller.courses[index],
-                                );
-                              },
-                              typeCourse: TypeCourse.downloadCourse,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 25),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Các Khóa Học Khác',
-                            style: AppTextStyle.w600s15(ColorName.redFf3),
+                          if (controller.isLoading2.value)
+                            Shimmer.fromColors(
+                              baseColor: ColorName.grayE0e,
+                              highlightColor: ColorName.grayD2d,
+                              child: Column(
+                                children: [
+                                  CourseItem(
+                                    course: Course(0, 0, '', '', '', 0, 0, 0, 0, 0),
+                                    onPressed: () {},
+                                    typeCourse: TypeCourse.myCourse,
+                                  ),
+                                  CourseItem(
+                                    course: Course(0, 0, '', '', '', 0, 0, 0, 0, 0),
+                                    onPressed: () {},
+                                    typeCourse: TypeCourse.myCourse,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Các Khóa học Đã Được Tải Về',
+                              style: AppTextStyle.w600s15(ColorName.blue007),
+                            ),
                           ),
-                        ),
-                        ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 5,
-                          itemBuilder: (context, index) {
-                            return CourseItem(
-                              course: Course(1, 'Chinh phục 600+ TOEIC', '', 1500, 0, 100, 100),
-                              onPressed: () {},
-                              typeCourse: TypeCourse.followCourse,
-                            );
-                          },
-                        ),
-                      ],
+                          if (controller.localCourses.isEmpty && !controller.isLoading1.value)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Chưa có khóa học nào được tải về',
+                                    style: AppTextStyle.w600s15(ColorName.black000),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: controller.localCourses.length,
+                            itemBuilder: (context, index) {
+                              return CourseItem(
+                                course: controller.localCourses[index],
+                                onPressed: () {
+                                  AppConfig.currentCourse = controller.localCourses[index];
+                                  N.toCousreDetailPage(
+                                    course: controller.localCourses[index],
+                                  );
+                                },
+                                typeCourse: TypeCourse.downloadCourse,
+                              );
+                            },
+                          ),
+                          if (controller.isLoading1.value)
+                            Shimmer.fromColors(
+                              baseColor: ColorName.grayE0e,
+                              highlightColor: ColorName.grayD2d,
+                              child: Column(
+                                children: [
+                                  CourseItem(
+                                    course: Course(0, 0, '', '', '', 0, 0, 0, 0, 0),
+                                    onPressed: () {},
+                                    typeCourse: TypeCourse.myCourse,
+                                  ),
+                                  CourseItem(
+                                    course: Course(0, 0, '', '', '', 0, 0, 0, 0, 0),
+                                    onPressed: () {},
+                                    typeCourse: TypeCourse.myCourse,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Các Khóa Học Khác',
+                              style: AppTextStyle.w600s15(ColorName.redFf3),
+                            ),
+                          ),
+                          if (controller.followCourses.isEmpty && !controller.isLoading3.value)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Chưa tham gia khóa học nào',
+                                    style: AppTextStyle.w600s15(ColorName.black000),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: controller.followCourses.length,
+                            itemBuilder: (context, index) {
+                              return CourseItem(
+                                course: controller.followCourses[index],
+                                onPressed: () {
+                                  controller.toCourseDetail(index);
+                                },
+                                typeCourse: TypeCourse.followCourse,
+                              );
+                            },
+                          ),
+                          if (controller.isLoading3.value)
+                            Shimmer.fromColors(
+                              baseColor: ColorName.grayE0e,
+                              highlightColor: ColorName.grayD2d,
+                              child: Column(
+                                children: [
+                                  CourseItem(
+                                    course: Course(0, 0, '', '', '', 0, 0, 0, 0, 0),
+                                    onPressed: () {},
+                                    typeCourse: TypeCourse.myCourse,
+                                  ),
+                                  CourseItem(
+                                    course: Course(0, 0, '', '', '', 0, 0, 0, 0, 0),
+                                    onPressed: () {},
+                                    typeCourse: TypeCourse.myCourse,
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -108,7 +221,9 @@ class CoursePage extends BaseWidget<CourseController> {
                 color: Colors.transparent,
                 child: CommonButton(
                   height: 50,
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.createCourse();
+                  },
                   fillColor: ColorName.primaryColor,
                   child: Text(
                     'Tạo mới khóa học',

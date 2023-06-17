@@ -91,7 +91,9 @@ Widget commonTextField(
   bool obscureText = false,
   bool isEnable = true,
   int? maxLines = 1,
+  int? maxLength,
   bool autofocus = false,
+  TextAlign textAlign = TextAlign.start,
   String? initialValue,
   TextEditingController? controller,
   TextInputAction? textInputAction = TextInputAction.next,
@@ -101,6 +103,8 @@ Widget commonTextField(
   Widget? suffixIcon,
   void Function()? onPressedSuffixIcon,
   double height = 72,
+  Color? fillColor,
+  TextStyle? textStyle,
 }) {
   final ctl = controller ?? TextEditingController();
   return Theme(
@@ -115,12 +119,14 @@ Widget commonTextField(
             final FocusNode focusNode = Focus.of(context);
             final bool hasFocus = focusNode.hasFocus;
             return FormBuilderTextField(
+              textAlign: textAlign,
+              maxLength: maxLength,
               autofocus: autofocus,
               scrollPadding: const EdgeInsets.all(36.0),
               maxLines: maxLines,
               initialValue: initialValue,
               name: type.name,
-              style: AppTextStyle.w400s13(ColorName.black333),
+              style: textStyle ?? AppTextStyle.w400s13(ColorName.black333),
               keyboardType: type.keyboardType,
               textAlignVertical: TextAlignVertical.center,
               textInputAction: textInputAction,
@@ -130,19 +136,20 @@ Widget commonTextField(
               controller: ctl,
               enabled: isEnable,
               decoration: InputDecoration(
+                counterText: "",
                 errorMaxLines: 2,
                 isDense: true,
                 labelText: type.labelText,
                 labelStyle: AppTextStyle.w700s14(ColorName.primaryColor),
                 alignLabelWithHint: true,
                 filled: true,
-                fillColor: hasFocus ? ColorName.whiteFff : ColorName.grayF8f,
+                fillColor: fillColor ?? (hasFocus ? ColorName.whiteFff : ColorName.grayF8f),
                 hintText: type.hintText,
                 hintStyle: AppTextStyle.w400s13(ColorName.grayC7c),
                 errorStyle: AppTextStyle.w400s13(ColorName.redFf3, height: 1),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 16),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: ColorName.gray838, width: 0.5),
+                  borderSide: const BorderSide(color: ColorName.gray838, width: 0.7),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 focusedBorder: OutlineInputBorder(

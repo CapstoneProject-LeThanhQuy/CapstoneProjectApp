@@ -4,6 +4,10 @@ import 'package:get/get.dart';
 class CourseBindings implements Bindings {
   @override
   void dependencies() {
-    Get.put(CourseController(Get.find()));
+    Get.put(CourseController(
+      Get.find(),
+      Get.find(),
+      Get.find(),
+    ));
   }
 }

@@ -5,7 +5,15 @@ import 'package:easy_english/base/data/local/repositories_imp/vocabulary_local_r
 import 'package:easy_english/base/domain/repositoties/course_level_local_repo.dart';
 import 'package:easy_english/base/domain/repositoties/course_local_repo.dart';
 import 'package:easy_english/base/domain/repositoties/vocabulary_local_repo.dart';
+import 'package:easy_english/feature/authentication/data/providers/remote/auth_api.dart';
 import 'package:easy_english/feature/authentication/data/providers/remote/user_api.dart';
+import 'package:easy_english/feature/authentication/data/repositories_imp/auth_repo_impl.dart';
+import 'package:easy_english/feature/authentication/domain/repositoties/auth_repo.dart';
+import 'package:easy_english/feature/course/data/providers/remote/course_api.dart';
+import 'package:easy_english/feature/course/data/repositories_imp/course_repo_impl.dart';
+import 'package:easy_english/feature/course/domain/repositoties/course_repo.dart';
+import 'package:easy_english/utils/services/storage_service.dart';
+import 'package:easy_english/utils/services/storage_service_impl.dart';
 import 'package:get/instance_manager.dart';
 
 import '../../../feature/authentication/data/repositories_imp/user_repo_impl.dart';
@@ -18,6 +26,7 @@ class AppBinding extends Bindings {
   void dependencies() {
     injectNetworkProvider();
     injectRepository();
+    injectService();
   }
 
   void injectNetworkProvider() {
@@ -31,6 +40,14 @@ class AppBinding extends Bindings {
       () => UserAPI(Get.find<DioBuilder>()),
       fenix: true,
     );
+    Get.lazyPut(
+      () => AuthAPI(Get.find<DioBuilder>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CourseAPI(Get.find<DioBuilder>()),
+      fenix: true,
+    );
   }
 
   void injectRepository() {
@@ -38,5 +55,11 @@ class AppBinding extends Bindings {
     Get.put<VocabularyLocalRepo>(VocabularyLocalRepoImp());
     Get.put<CourseLocalRepo>(CourseLocalRepoImp());
     Get.put<CourseLevelLocalRepo>(CourseLevelLocalRepoImp());
+    Get.put<AuthRepo>(AuthRepoImpl());
+    Get.put<CourseRepo>(CourseRepoImpl());
+  }
+
+  void injectService() {
+    Get.put<StorageService>(StorageServiceImpl());
   }
 }

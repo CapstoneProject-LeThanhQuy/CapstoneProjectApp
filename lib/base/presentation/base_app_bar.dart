@@ -14,6 +14,7 @@ class BaseAppBar extends AppBar {
     double? titleSpacing,
     List<Widget>? actions,
     Widget? leading = const CommonBackButton(),
+    double? leadingWidth = 100,
     double? elevation = 3,
     bool centerTitle = true,
     PreferredSizeWidget? bottom,
@@ -30,7 +31,7 @@ class BaseAppBar extends AppBar {
           elevation: elevation,
           leading: leading,
           actions: actions,
-          leadingWidth: 100,
+          leadingWidth: leadingWidth,
           shadowColor: shadowColor,
           bottom: bottom,
         );

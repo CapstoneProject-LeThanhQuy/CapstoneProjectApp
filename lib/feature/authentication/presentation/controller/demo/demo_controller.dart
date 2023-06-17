@@ -113,6 +113,8 @@ class DemoController extends GetxController {
         },
       ),
       input: CourseLocal(
+        id: 0,
+        publicId: 0,
         title: titleTextEditingController.text,
         totalWords: int.parse(totalWordsTextEditingController.text),
         learnedWords: int.parse(learnedWordsTextEditingController.text),
@@ -208,6 +210,8 @@ class DemoController extends GetxController {
           progress: int.parse(progressWordsTextEditingController.text),
           image: imageTextEditingController.text,
           difficult: 0,
+          wordType: 'NONE',
+          lastTimeLearning: '',
         )
       ],
     );

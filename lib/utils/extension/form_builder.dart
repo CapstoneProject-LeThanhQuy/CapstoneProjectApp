@@ -13,6 +13,15 @@ enum FormFieldType {
   memo,
   loginEmailOrPhone,
   loginPassword,
+  title,
+  number,
+  imageCourse,
+  passwordCourse,
+  englishText,
+  imageVocabulary,
+  vietnameseText,
+  addAutoVocabulary,
+  reviewWord,
 }
 
 extension FormFieldTypeExtension on FormFieldType {
@@ -25,7 +34,21 @@ extension FormFieldTypeExtension on FormFieldType {
       case FormFieldType.loginPassword:
         return 'Mật khẩu';
       case FormFieldType.memo:
-        return '';
+        return 'Mô tả';
+      case FormFieldType.addAutoVocabulary:
+        return 'Đường dẫn hoặc đoạn văn';
+      case FormFieldType.title:
+        return 'Tiêu đề';
+      case FormFieldType.imageCourse:
+        return 'Ảnh bìa';
+      case FormFieldType.passwordCourse:
+        return 'Mật khẩu';
+      case FormFieldType.englishText:
+        return 'Từ vựng';
+      case FormFieldType.vietnameseText:
+        return 'Nghĩa';
+      case FormFieldType.imageVocabulary:
+        return 'Ảnh minh họa';
       default:
         return '';
     }
@@ -47,6 +70,23 @@ extension FormFieldTypeExtension on FormFieldType {
         return '0123456789 hoặc sample@gmail.com';
       case FormFieldType.loginPassword:
         return 'Mật khẩu';
+      case FormFieldType.memo:
+        return 'Mô tả';
+      case FormFieldType.title:
+        return 'Tiêu đề';
+      case FormFieldType.number:
+        return '0';
+      case FormFieldType.imageVocabulary:
+      case FormFieldType.imageCourse:
+        return 'https://example.jpg';
+      case FormFieldType.passwordCourse:
+        return '******';
+      case FormFieldType.englishText:
+        return 'Hi';
+      case FormFieldType.vietnameseText:
+        return 'Xin chào';
+      case FormFieldType.addAutoVocabulary:
+        return 'https://example.txt or Aaa...';
       default:
         return '';
     }
@@ -57,7 +97,10 @@ extension FormFieldTypeExtension on FormFieldType {
       case FormFieldType.phone:
         return TextInputType.phone;
       case FormFieldType.memo:
+      case FormFieldType.addAutoVocabulary:
         return TextInputType.multiline;
+      case FormFieldType.number:
+        return TextInputType.number;
       default:
         return TextInputType.text;
     }
@@ -116,6 +159,19 @@ extension FormFieldTypeExtension on FormFieldType {
           FormBuilderValidators.maxLength(25, errorText: 'Họ và tên tối đa 25 ký tự'),
         ];
         break;
+      case FormFieldType.title:
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống tiêu đề'),
+          FormBuilderValidators.maxLength(80, errorText: 'Họ và tên tối đa 80 ký tự'),
+        ];
+        break;
+      case FormFieldType.number:
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống độ khó'),
+          FormBuilderValidators.numeric(errorText: 'Vui lòng nhập vào giá trị là chữ số'),
+          FormBuilderValidators.maxLength(2, errorText: 'Độ khó tối đa là 99'),
+        ];
+        break;
       case FormFieldType.phone:
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống số điện thoại'),
@@ -126,13 +182,17 @@ extension FormFieldTypeExtension on FormFieldType {
       case FormFieldType.loginPassword:
       case FormFieldType.password:
       case FormFieldType.confirmPassword:
+      case FormFieldType.passwordCourse:
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống mật khẩu'),
-          FormBuilderValidators.minLength(8, errorText: 'Mật khẩu bao gồm tối thiểu 8 ký tự chữ và số'),
+          FormBuilderValidators.minLength(6, errorText: 'Mật khẩu bao gồm tối thiểu 6 ký tự chữ và số'),
         ];
         break;
       case FormFieldType.memo:
-        validators = [FormBuilderValidators.maxLength(1000, errorText: 'Vượt quá giói hạn số từ')];
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống mô tả'),
+          FormBuilderValidators.maxLength(1000, errorText: 'Vượt quá giói hạn số từ')
+        ];
         break;
       default:
         return null;

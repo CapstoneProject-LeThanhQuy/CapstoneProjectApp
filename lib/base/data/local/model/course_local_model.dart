@@ -1,5 +1,6 @@
 class CourseLocal {
   int? id;
+  int? publicId;
   String? title;
   String? image;
   int? learnedWords;
@@ -9,7 +10,8 @@ class CourseLocal {
   int? point;
 
   CourseLocal({
-    this.id,
+    required this.id,
+    required this.publicId,
     required this.title,
     required this.image,
     required this.learnedWords,
@@ -32,6 +34,7 @@ class CourseLocal {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
+      'id': id,
       'title': title,
       'image': image,
       'learned_words': learnedWords,

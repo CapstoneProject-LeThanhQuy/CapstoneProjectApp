@@ -55,27 +55,29 @@ class LocalStorage {
     'image TEXT NOT NULL',
     'progress INTEGER DEFAULT 0',
     'difficult INTEGER DEFAULT 0',
+    'word_type TEXT NOT NULL',
+    'last_time_learning TEXT NOT NULL',
     'course_id INTEGER NOT NULL',
     'level_id INTEGER NOT NULL',
   ];
   _onCreate(Database database, int version) async {
     //tạo database
 
-    var courseQuery = "CREATE TABLE course (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
+    var courseQuery = "CREATE TABLE course (id INTEGER PRIMARY KEY NOT NULL";
     for (var element in course) {
       courseQuery += ", $element";
     }
     courseQuery += ");";
     await database.execute(courseQuery);
 
-    var courseLevelQuery = "CREATE TABLE course_level (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
+    var courseLevelQuery = "CREATE TABLE course_level (id INTEGER PRIMARY KEY NOT NULL";
     for (var element in courseLevel) {
       courseLevelQuery += ", $element";
     }
     courseLevelQuery += ");";
     await database.execute(courseLevelQuery);
 
-    var vocabularyQuery = "CREATE TABLE vocabulary (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
+    var vocabularyQuery = "CREATE TABLE vocabulary (id INTEGER PRIMARY KEY NOT NULL";
     for (var element in vocabulary) {
       vocabularyQuery += ", $element";
     }
