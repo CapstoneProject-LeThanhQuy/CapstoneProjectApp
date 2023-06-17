@@ -1,26 +1,390 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_english/base/presentation/base_app_bar.dart';
 import 'package:easy_english/base/presentation/base_widget.dart';
-import 'package:easy_english/feature/home/data/models/target.dart';
+import 'package:easy_english/feature/course/data/models/course_model.dart';
 import 'package:easy_english/feature/home/presentation/controller/home/home_controller.dart';
 import 'package:easy_english/feature/home/presentation/view/home/widgets/widget.dart';
+import 'package:easy_english/utils/config/app_text_style.dart';
+import 'package:easy_english/utils/gen/assets.gen.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends BaseWidget<HomeController> {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget onBuild(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorName.grayF2f,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 25),
-          child: Column(
-            children: [
-              TargetItem( 
-                target: Target(15, 5, 30, 30, 19, 130),
+    return Obx(
+      () {
+        return Scaffold(
+          appBar: BaseAppBar(
+            leadingWidth: 300,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    controller.curentCourse.value.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyle.w600s17(ColorName.whiteFff),
+                  ),
+                ],
               ),
+            ),
+            actions: [
+              CupertinoButton(
+                onPressed: () {},
+                child: const Icon(
+                  CupertinoIcons.search,
+                  color: ColorName.whiteFff,
+                ),
+              )
             ],
           ),
+          backgroundColor: ColorName.grayF2f,
+          body: SmartRefresher(
+            scrollController: controller.scrollController,
+            enablePullDown: true,
+            controller: controller.refreshController,
+            onRefresh: controller.onRefresh,
+            onLoading: controller.onLoading,
+            header: const WaterDropMaterialHeader(
+              backgroundColor: ColorName.primaryColor,
+            ),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Việc cần làm hôm nay',
+                        style: AppTextStyle.w600s17(ColorName.black000),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TargetItem(
+                        target: controller.target.value,
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Từ vựng cần ôn tập',
+                        style: AppTextStyle.w600s17(ColorName.black000),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          learningItem(
+                            onPressed: () {
+                              controller.learnDifficultWord();
+                            },
+                            icon: CupertinoIcons.bolt_fill,
+                            title: 'Từ khó',
+                            badge: controller.difficltWords.value,
+                          ),
+                          learningItem(
+                            onPressed: () {
+                              controller.reviewLearnedWord();
+                            },
+                            icon: CupertinoIcons.book_solid,
+                            title: 'Ôn tập',
+                            badge: controller.reviewWords.value,
+                          ),
+                          learningItem(
+                            onPressed: () {
+                              controller.speakLearnedWord();
+                            },
+                            icon: CupertinoIcons.volume_down,
+                            title: 'Luyện phát âm',
+                            badge: controller.reviewWords.value,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Khám phá',
+                        style: AppTextStyle.w600s17(ColorName.black000),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    if (controller.listCourse.isNotEmpty)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.listCourse.length,
+                        itemBuilder: (context, index) {
+                          return homeCourseItem(
+                            onPressed: () {
+                              controller.toCourseDetail(index);
+                            },
+                            course: controller.listCourse[index],
+                          );
+                        },
+                      ),
+                    if (controller.listCourse.isEmpty && !controller.isLoading.value)
+                      Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Không có khóa học nào cho bạn',
+                                textAlign: TextAlign.center,
+                                style: AppTextStyle.w600s15(ColorName.black000),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    if (controller.isLoading.value)
+                      Shimmer.fromColors(
+                        baseColor: ColorName.grayE0e,
+                        highlightColor: ColorName.grayD2d,
+                        child: Column(
+                          children: [
+                            homeCourseItem(
+                              onPressed: () {},
+                              course: CourseModel(),
+                            ),
+                            homeCourseItem(
+                              onPressed: () {},
+                              course: CourseModel(),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget learningItem({
+    Function()? onPressed,
+    required IconData icon,
+    required String title,
+    required int badge,
+  }) {
+    return SizedBox(
+      width: 110,
+      child: Stack(
+        children: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              if (onPressed != null) {
+                onPressed.call();
+              }
+            },
+            child: Center(
+              child: Column(
+                children: [
+                  Container(
+                    height: 70,
+                    width: 70,
+                    margin: const EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                      color: ColorName.blue80b.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(70),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorName.blue005.withOpacity(0.5),
+                          spreadRadius: 0.5,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      icon,
+                      color: ColorName.primaryColor,
+                      size: 35,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    title,
+                    style: AppTextStyle.w500s16(ColorName.primaryColor),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (badge > 0)
+            Positioned(
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(width: 3, color: ColorName.primaryColor),
+                  color: ColorName.whiteFff,
+                ),
+                child: Text(
+                  '$badge',
+                  style: AppTextStyle.w700s16(ColorName.primaryColor),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget homeCourseItem({required CourseModel course, Function()? onPressed}) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 140),
+      color: ColorName.whiteFff,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          if (onPressed != null) {
+            onPressed.call();
+          }
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(120),
+              child: (course.image ?? '').isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: course.image ?? '',
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Center(
+                        child: Assets.images.logoIcon.image(
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )
+                  : SizedBox(
+                      height: 120,
+                      width: 120,
+                      child: Center(
+                        child: Assets.images.logoIcon.image(
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '${(course.rating ?? 0).toInt()}/5',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.w500s12(ColorName.green459),
+                      ),
+                      const Icon(
+                        Icons.star_border_purple500,
+                        color: ColorName.green459,
+                        size: 15,
+                      ),
+                      const SizedBox(width: 15),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Text(
+                      course.title ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.w700s18(ColorName.black000),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Text(
+                      course.description ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.w500s15(ColorName.gray828),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.person_2_alt,
+                        color: ColorName.blue005,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        '${course.member}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.w600s17(ColorName.blue005),
+                      ),
+                      const SizedBox(width: 20),
+                      const Icon(
+                        CupertinoIcons.book_solid,
+                        color: ColorName.orangeDdb,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        '${course.totalWords}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.w600s17(ColorName.orangeDdb),
+                      ),
+                      const SizedBox(width: 2),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

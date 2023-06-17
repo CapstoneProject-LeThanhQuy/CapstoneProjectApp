@@ -71,7 +71,6 @@ class RegisterController extends BaseController {
   String emailOrPhone = '';
   String password = '';
   String confirmPassword = '';
-  BaseHelper baseHelper = BaseHelper();
   bool isSpeaking = true;
   String otpPin = '123456';
 
@@ -230,7 +229,7 @@ class RegisterController extends BaseController {
   }
 
   void showMessageConfirm() {
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
@@ -299,7 +298,7 @@ class RegisterController extends BaseController {
   void showMessageName() {
     RxBool isShowSubmitButton = false.obs;
     nameTextEditingController.text = '';
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Get.back(),
@@ -416,7 +415,7 @@ class RegisterController extends BaseController {
   }
 
   void showMessageGender() {
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
@@ -490,7 +489,7 @@ class RegisterController extends BaseController {
   void showMessagePhoneOrEmail() {
     RxBool isShowSubmitButton = false.obs;
     emailOrPhoneTextEditingController.text = '';
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Get.back(),
@@ -598,7 +597,7 @@ class RegisterController extends BaseController {
   }
 
   void showMessageOTP() {
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Get.back(),
@@ -654,7 +653,7 @@ class RegisterController extends BaseController {
   void showMessagePassword() {
     RxBool isShowSubmitButton = false.obs;
     passwordTextEditingController.text = '';
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Get.back(),
@@ -777,7 +776,7 @@ class RegisterController extends BaseController {
   void showMessageConfirmPassword() {
     RxBool isShowSubmitButton = false.obs;
     confirmPasswordTextEditingController.text = '';
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Get.back(),
@@ -910,7 +909,7 @@ class RegisterController extends BaseController {
   }
 
   void goToHomePage() {
-    baseHelper.showCustomDialog(
+    BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -921,10 +920,10 @@ class RegisterController extends BaseController {
           backgroundColor: Colors.transparent,
           body: Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
+              children: [
                 // TODO
               ],
             ),

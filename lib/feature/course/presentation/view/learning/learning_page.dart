@@ -14,74 +14,90 @@ class LearningPage extends BaseWidget<LearningController> {
   Widget onBuild(BuildContext context) {
     return Obx(
       () {
-        return Scaffold(
-          appBar: BaseAppBar(
-            actions: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Center(
-                  child: Text(
-                    'Điểm tích lũy: ${controller.point.value}',
-                    style: AppTextStyle.w600s13(ColorName.whiteFaf),
+        return IgnorePointer(
+          ignoring: controller.isCompleted.value,
+          child: Scaffold(
+            appBar: BaseAppBar(
+              actions: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Center(
+                    child: Text(
+                      'Điểm tích lũy: ${controller.point.value}',
+                      style: AppTextStyle.w600s13(ColorName.whiteFaf),
+                    ),
                   ),
+                )
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(0),
+                child: LinearProgressIndicator(
+                  minHeight: 6,
+                  backgroundColor: ColorName.orangeF29.withOpacity(0.4),
+                  valueColor: const AlwaysStoppedAnimation<Color>(ColorName.orangeF29),
+                  value: (controller.currentIndex.value + 1) / (controller.maxIndex + 1),
                 ),
-              )
-            ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(0),
-              child: LinearProgressIndicator(
-                minHeight: 6,
-                backgroundColor: ColorName.orangeF29.withOpacity(0.4),
-                valueColor: const AlwaysStoppedAnimation<Color>(ColorName.orangeF29),
-                value: (controller.currentIndex.value + 1) / (controller.maxIndex + 1),
               ),
             ),
-          ),
-          body: controller.vocabularies.isNotEmpty
-              ? controller.currentType.value == TypeLearning.newWord
-                  ? NewWordItem(
-                      onPressedNext: () {
-                        controller.nextWord();
-                      },
-                      onPressedPlaySound: () {
-                        controller.speechText();
-                      },
-                      vocabulary: controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
-                    )
-                  : controller.currentType.value == TypeLearning.learningWord
-                      ? LearningWordItem(
-                          onPressedAnswer: (isConrrect) {
-                            controller.speechText(
-                              completed: () {
-                                if (isConrrect) {
+            body: controller.vocabularies.isNotEmpty && !controller.isCompleted.value
+                ? controller.isReview.value
+                    ? ReviewWordItem(
+                        onComplete: () {
+                          controller.speechText(
+                            completed: () {
+                              controller.nextWord();
+                            },
+                          );
+                        },
+                        vocabulary: controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                        listKeyReview: controller.listKeyReview,
+                      )
+                    : controller.currentType.value == TypeLearning.newWord
+                        ? NewWordItem(
+                            onPressedNext: () {
+                              controller.nextWord();
+                            },
+                            onPressedPlaySound: () {
+                              controller.speechText();
+                            },
+                            vocabulary:
+                                controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                          )
+                        : controller.currentType.value == TypeLearning.learningWord
+                            ? LearningWordItem(
+                                onPressedAnswer: (isConrrect) {
+                                  controller.speechText(
+                                    completed: () {
+                                      if (isConrrect) {
+                                        controller.nextWord();
+                                      } else {
+                                        controller.learningWord(isDifficultWord: true);
+                                      }
+                                    },
+                                  );
+                                },
+                                vocabulary:
+                                    controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                                anotherAnswers: controller.anotherAnswers,
+                                chooseVietnamese: controller.chooseVietnamese,
+                              )
+                            : DifficultWordItem(
+                                onPressedNext: () {
                                   controller.nextWord();
-                                } else {
-                                  controller.learningWord(isDifficultWord: true);
-                                }
-                              },
-                            );
-                          },
-                          vocabulary:
-                              controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
-                          anotherAnswers: controller.anotherAnswers,
-                          chooseVietnamese: controller.chooseVietnamese,
-                        )
-                      : DifficultWordItem(
-                          onPressedNext: () {
-                            controller.nextWord();
-                          },
-                          onPressedPlaySound: () {
-                            controller.speechText();
-                          },
-                          vocabulary:
-                              controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
-                        )
-              : Container(
-                  color: ColorName.black000.withOpacity(0.6),
-                  child: const LoadingWidget(
+                                },
+                                onPressedPlaySound: () {
+                                  controller.speechText();
+                                },
+                                vocabulary:
+                                    controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                              )
+                : Container(
                     color: ColorName.whiteFff,
+                    child: const LoadingWidget(
+                      color: ColorName.primaryColor,
+                    ),
                   ),
-                ),
+          ),
         );
       },
     );

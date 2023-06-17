@@ -28,7 +28,7 @@ class SettingPage extends BaseWidget<SettingController> {
               child: CommonButton(
                 height: 50,
                 onPressed: () {
-                  N.toLandingPage();
+                  controller.logoutEasyEnglish();
                 },
                 fillColor: ColorName.primaryColor,
                 child: Text(

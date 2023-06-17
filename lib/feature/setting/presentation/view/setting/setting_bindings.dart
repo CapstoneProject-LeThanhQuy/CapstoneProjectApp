@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class SettingBindings implements Bindings {
   @override
   void dependencies() {
-    Get.put(SettingController());
+    Get.put(SettingController(Get.find()));
   }
 }

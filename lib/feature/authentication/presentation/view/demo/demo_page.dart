@@ -192,12 +192,15 @@ class DemoPage extends GetWidget<DemoController> {
                       child: CourseItem(
                         course: Course(
                           controller.courses[index].id ?? 0,
+                          controller.courses[index].publicId ?? 0,
                           controller.courses[index].title ?? '',
+                          '',
                           controller.courses[index].image ?? '',
                           controller.courses[index].totalWords ?? 0,
                           controller.courses[index].learnedWords ?? 0,
                           controller.courses[index].member ?? 0,
                           controller.courses[index].progress ?? 0,
+                          0,
                         ),
                         typeCourse: TypeCourse.downloadCourse,
                         onPressed: () {
@@ -228,6 +231,7 @@ class DemoPage extends GetWidget<DemoController> {
                           controller.courseLevels[index].id ?? 0,
                           controller.courseLevels[index].level ?? 0,
                           controller.courseLevels[index].title ?? '',
+                          controller.courseLevels[index].courseId ?? 0,
                           controller.courseLevels[index].totalWords ?? 0,
                           controller.courseLevels[index].learnedWords ?? 0,
                         ),
@@ -258,6 +262,10 @@ class DemoPage extends GetWidget<DemoController> {
                         controller.vocabularies[index].image ?? '',
                         controller.vocabularies[index].progress ?? 0,
                         0,
+                        0,
+                        0,
+                        controller.vocabularies[index].wordType ?? 'NONE',
+                        controller.vocabularies[index].lastTimeLearning ?? '0',
                       ),
                     );
                   },

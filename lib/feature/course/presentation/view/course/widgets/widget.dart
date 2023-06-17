@@ -39,8 +39,8 @@ Widget courseItem({void Function()? onPressed, required Course course, required 
             child: course.image.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: course.image,
-                    height: 75,
-                    width: 75,
+                    height: 50,
+                    width: 50,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => const CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Center(
@@ -101,9 +101,22 @@ Widget courseItem({void Function()? onPressed, required Course course, required 
                         size: 16,
                       ),
                       const SizedBox(width: 5),
+                      Text(
+                        '${course.member}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.w500s14(ColorName.green4c8),
+                      ),
+                      const SizedBox(width: 15),
+                      const Icon(
+                        CupertinoIcons.book_solid,
+                        color: ColorName.green4c8,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 5),
                       Expanded(
                         child: Text(
-                          '${course.member}',
+                          '${course.totalWords}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyle.w500s14(ColorName.green4c8),

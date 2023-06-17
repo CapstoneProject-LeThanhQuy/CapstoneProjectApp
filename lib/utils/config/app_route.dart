@@ -13,8 +13,22 @@ import 'package:easy_english/feature/course/presentation/view/course_detail/cour
 import 'package:easy_english/feature/course/presentation/view/course_detail/course_detail_page.dart';
 import 'package:easy_english/feature/course/presentation/view/course_vocabulary/course_vocabulary_bindings.dart';
 import 'package:easy_english/feature/course/presentation/view/course_vocabulary/course_vocabulary_page.dart';
+import 'package:easy_english/feature/course/presentation/view/create_course/create_course_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/create_course/create_course_page.dart';
+import 'package:easy_english/feature/course/presentation/view/create_vocabulary/create_vocabulary_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/create_vocabulary/create_vocabulary_page.dart';
 import 'package:easy_english/feature/course/presentation/view/learning/learning_bindings.dart';
 import 'package:easy_english/feature/course/presentation/view/learning/learning_page.dart';
+import 'package:easy_english/feature/course/presentation/view/learning_difficult/learning_difficult_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/learning_difficult/learning_difficult_page.dart';
+import 'package:easy_english/feature/course/presentation/view/learning_difficult_words/learning_difficult_words_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/learning_difficult_words/learning_difficult_words_page.dart';
+import 'package:easy_english/feature/course/presentation/view/preview_image/preview_image_bindings.dart';
+import 'package:easy_english/feature/course/presentation/view/preview_image/preview_image_page.dart';
+import 'package:easy_english/feature/home/presentation/view/home_course_detail/home_course_detail_bindings.dart';
+import 'package:easy_english/feature/home/presentation/view/home_course_detail/home_course_detail_page.dart';
+import 'package:easy_english/feature/home/presentation/view/vocabulary_detail/vocabulary_detail_bindings.dart';
+import 'package:easy_english/feature/home/presentation/view/vocabulary_detail/vocabulary_detail_page.dart';
 import 'package:get/route_manager.dart';
 
 import '../../../feature/authentication/presentation/view/demo/demo_bindings.dart';
@@ -34,6 +48,13 @@ class AppRoute {
   static String cousreDetail = '/cousreDetail';
   static String cousreVocabulary = '/cousreVocabulary';
   static String learning = '/learning';
+  static String createCourse = '/createCourse';
+  static String createVocabulary = '/createVocabulary';
+  static String previewImage = '/previewImage';
+  static String homeCourseDetail = '/homeCourseDetail';
+  static String vocabularyDetail = '/vocabularyDetail';
+  static String learnDifficultWord = '/learnDifficultWord';
+  static String learningDifficult = '/learningDifficult';
 
   static List<GetPage> generateGetPages = [
     GetPage(
@@ -100,6 +121,48 @@ class AppRoute {
       name: learning,
       page: LearningPage.new,
       binding: LearningBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: createCourse,
+      page: CreateCoursePage.new,
+      binding: CreateCourseBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: createVocabulary,
+      page: CreateVocabularyPage.new,
+      binding: CreateVocabularyBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: previewImage,
+      page: PreviewImagePage.new,
+      binding: PreviewImageBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: homeCourseDetail,
+      page: HomeCourseDetailPage.new,
+      binding: HomeCourseDetailBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: vocabularyDetail,
+      page: VocabularyDetailPage.new,
+      binding: VocabularyDetailBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: learnDifficultWord,
+      page: LearningDifficultWordsPage.new,
+      binding: LearningDifficultWordsBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: learningDifficult,
+      page: LearningDifficultPage.new,
+      binding: LearningDifficultBindings(),
       transition: Transition.cupertino,
     ),
   ];

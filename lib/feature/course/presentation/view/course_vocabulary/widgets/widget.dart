@@ -61,7 +61,9 @@ Widget courseVocabularyItem({void Function()? onPressed, required Vocabulary voc
                   const SizedBox(height: 5),
                   LinearProgressIndicator(
                     minHeight: 8,
-                    value: vocabulary.progress / AppConfig.currentCourse.progress,
+                    value: AppConfig.currentCourse.progress == 0
+                        ? 0
+                        : vocabulary.progress / AppConfig.currentCourse.progress,
                     color: ColorName.primaryColor,
                     backgroundColor: ColorName.green459.withOpacity(0.2),
                     semanticsLabel: 'Linear progress indicator',

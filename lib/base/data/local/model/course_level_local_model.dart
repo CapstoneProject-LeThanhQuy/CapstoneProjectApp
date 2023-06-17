@@ -26,6 +26,7 @@ class CourseLevelLocal {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
+      'id': id,
       'level': level,
       'title': title,
       'learned_words': learnedWords,
