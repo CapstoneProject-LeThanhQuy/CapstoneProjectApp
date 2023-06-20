@@ -9,4 +9,6 @@ abstract class VocabularyLocalRepo {
   Future<List<VocabularyLocal>> getVocabulariesWithLevelId(int levelId);
 
   Future<bool> updateVocabularyDifficult(Vocabulary vocabulary);
+
+  Future<List<VocabularyLocal>> getAllVocabulary();
 }

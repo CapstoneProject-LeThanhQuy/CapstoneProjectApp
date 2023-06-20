@@ -5,11 +5,13 @@ import 'package:easy_english/base/data/local/model/vocabulary_local_model.dart';
 import 'package:easy_english/base/domain/usecases/get_vocabularies_withlevel_local_usecase.dart';
 import 'package:easy_english/base/domain/usecases/update_course_local_usecase.dart';
 import 'package:easy_english/base/presentation/base_controller.dart';
+import 'package:easy_english/base/presentation/speech_to_text.dart';
 import 'package:easy_english/base/presentation/text_to_speech.dart';
 import 'package:easy_english/feature/course/data/models/vocabulary.dart';
 import 'package:easy_english/feature/course/presentation/controller/course/course_controller.dart';
 import 'package:easy_english/feature/course/presentation/controller/course_detail/course_detail_controller.dart';
 import 'package:easy_english/feature/course/presentation/controller/course_vocabulary/course_vocabulary_controller.dart';
+import 'package:easy_english/feature/course/presentation/view/learning/widgets/widget.dart';
 import 'package:easy_english/feature/home/data/models/target.dart';
 import 'package:easy_english/feature/home/presentation/controller/home/home_controller.dart';
 import 'package:easy_english/utils/config/app_config.dart';
@@ -48,6 +50,8 @@ class LearningController extends BaseController<List<Vocabulary>> {
 
   RxBool isCompleted = false.obs;
   RxBool isReview = false.obs;
+  RxBool isSpeakLearn = false.obs;
+  RxBool isSpeakingToText = false.obs;
   RxList<String> listKeyReview = RxList.empty();
 
   @override
@@ -85,7 +89,7 @@ class LearningController extends BaseController<List<Vocabulary>> {
               .toList();
           vocabularies.value = input;
           AppConfig.isReview = vocabularies.firstWhereOrNull((vocabulary) => vocabulary.progress == 0) == null;
-          isReview.value = AppConfig.isReview;
+          isSpeakLearn.value = AppConfig.isSpeakLearn;
           if (input.length < 5) {
             listIndexRandom = [];
             for (var i = 0; i < input.length; i++) {
@@ -190,6 +194,9 @@ class LearningController extends BaseController<List<Vocabulary>> {
       } else {
         listKeyReview.addAll({...getRandomString(1).split('')});
       }
+    } else if (isSpeakLearn.value) {
+      speechText();
+      currentType.value = TypeLearning.learningWord;
     } else {
       currentType.value = TypeLearning.learningWord;
       chooseVietnamese = Random().nextDouble() > .3;
@@ -245,9 +252,11 @@ class LearningController extends BaseController<List<Vocabulary>> {
     }
     target.listNewWords = {...(newWords + target.listNewWords)}.toList();
     target.listReviewedWords = {...(reviewWords + target.listReviewedWords)}.toList();
+    target.listReviewedWordsTime = reviewWords + target.listReviewedWordsTime;
+    target.listNewWordsTime = newWords + target.listNewWordsTime;
     target.newWords = target.listNewWords.length;
     target.learnedWords = target.listReviewedWords.length;
-    target.time = (target.newWords + target.learnedWords) ~/ 12;
+    target.time = (target.listNewWordsTime.length + target.listReviewedWordsTime.length) ~/ 24;
     if ((target.newWords + target.learnedWords) >= target.targetWord && !isCompleted) {
       target.consecutiveDays = target.consecutiveDays + 1;
     }
@@ -279,7 +288,7 @@ class LearningController extends BaseController<List<Vocabulary>> {
             ),
           )
           .toList();
-      if (!AppConfig.isReview) {
+      if (!AppConfig.isReview && !AppConfig.isSpeakLearn) {
         AppConfig.currentCourseLevel.learnedWords = AppConfig.currentCourseLevel.learnedWords + learnedWord;
         AppConfig.currentCourse.learnedWords = AppConfig.currentCourse.learnedWords + learnedWord;
       }
@@ -324,6 +333,58 @@ class LearningController extends BaseController<List<Vocabulary>> {
     } catch (e) {
       print(e);
       systemError();
+    }
+  }
+
+  final speechToText = CommonSpeechToText();
+
+  void listeningSpeech(Vocabulary vocabulary) {
+    isSpeakingToText.value = true;
+    speechToText.listen(onListen: (textListen) {
+      if (textListen.trim().isNotEmpty &&
+          isSpeakingToText.value &&
+          textListen.trim().split(' ').length >= vocabulary.englishText.trim().split(' ').length) {
+        isSpeakingToText.value = false;
+        speechToText.stop();
+        checkSpeech(textListen, vocabulary.englishText);
+      }
+    }, onStop: () {
+      if (isSpeakingToText.value) {
+        print('Time out');
+        isSpeakingToText.value = false;
+        speechToText.stop();
+        AwesomeDialog(
+          context: Get.context!,
+          dialogType: DialogType.warning,
+          title: 'Không nghe thấy',
+          desc: 'Bạn cần phát âm to và rõ từ vựng',
+          descTextStyle: AppTextStyle.w600s17(ColorName.black000),
+          btnOkText: 'Thử lại',
+          btnOkOnPress: () {},
+          onDismissCallback: (_) {},
+        ).show();
+      }
+    });
+  }
+
+  void checkSpeech(String text, String vocabulary) {
+    if (text.toUpperCase() != vocabulary.toUpperCase()) {
+      AwesomeDialog(
+        context: Get.context!,
+        dialogType: DialogType.warning,
+        title: 'Sai rồi',
+        desc: 'Từ bạn vừa phát âm là [$text]',
+        descTextStyle: AppTextStyle.w600s17(ColorName.black000),
+        btnOkText: 'Thử lại',
+        btnOkOnPress: () {},
+        onDismissCallback: (_) {},
+      ).show();
+    } else {
+      speechText(
+        completed: () {
+          nextWord();
+        },
+      );
     }
   }
 

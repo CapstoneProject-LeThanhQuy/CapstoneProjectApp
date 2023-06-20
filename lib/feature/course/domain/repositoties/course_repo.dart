@@ -16,4 +16,5 @@ abstract class CourseRepo {
   Future<List<CourseModel>> getAllCourse(GetAllCourseRequest request);
   Future<bool> followCourse(FollowCourseRequest request);
   Future<List<CourseModel>> getAllCourseFllow();
+  Future<List<CourseModel>> getCourseWithPublicId(String request);
 }

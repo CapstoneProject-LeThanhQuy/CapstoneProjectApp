@@ -4,6 +4,7 @@ import 'package:easy_english/base/presentation/base_controller.dart';
 import 'package:easy_english/base/presentation/base_helper.dart';
 import 'package:easy_english/feature/course/data/models/course_level.dart';
 import 'package:easy_english/feature/course/data/models/vocabulary.dart';
+import 'package:easy_english/utils/config/app_config.dart';
 import 'package:easy_english/utils/config/app_navigation.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
@@ -28,6 +29,7 @@ class CourseVocabularyController extends BaseController<CourseLevel> {
   }
 
   void onGetListVocabularyWithLevel(int id) {
+    AppConfig.isSpeakLearn = false;
     _getVocabulariesWithLevelLocalUsecase.execute(
       observer: Observer(
         onSuccess: (val) {
@@ -51,7 +53,8 @@ class CourseVocabularyController extends BaseController<CourseLevel> {
                 ),
               )
               .toList();
-
+          difficltWords.value = BaseHelper.totalWordDifficult(vocabularies);
+          reviewWords.value = BaseHelper.totalWordNeedReview(vocabularies);
           isHasNewWord.value = BaseHelper.isHasNewWords(vocabularies);
         },
         onError: (e) {
@@ -76,7 +79,47 @@ class CourseVocabularyController extends BaseController<CourseLevel> {
 
   void learnNewWord() {
     if (vocabularies.isNotEmpty) {
+      AppConfig.isSpeakLearn = false;
       N.toLearningPage(vocabularies: BaseHelper.selectWordToLearn(vocabularies));
+    }
+  }
+
+  RxInt difficltWords = 0.obs;
+  RxInt reviewWords = 0.obs;
+
+  void learnDifficultWord() {
+    if (vocabularies.isNotEmpty) {
+      if (AppConfig.currentCourse.totalWords > 0 && BaseHelper.totalWordDifficult(vocabularies) > 0) {
+        AppConfig.isSpeakLearn = false;
+        N.toLearnDifficultWord(vocabularies: BaseHelper.allWordDifficult(vocabularies));
+      }
+    }
+  }
+
+  void reviewLearnedWord() {
+    if (vocabularies.isNotEmpty) {
+      if (AppConfig.currentCourse.totalWords > 0 && AppConfig.currentCourse.learnedWords > 0) {
+        AppConfig.isSpeakLearn = false;
+        N.toLearningPage(
+          vocabularies: BaseHelper.selectWordToLearn(
+            vocabularies,
+            isReview: true,
+          ),
+        );
+      }
+    }
+  }
+
+  void speakLearnedWord() {
+    if (vocabularies.isNotEmpty) {
+      if (AppConfig.currentCourse.totalWords > 0 && AppConfig.currentCourse.learnedWords > 0) {
+        AppConfig.isSpeakLearn = true;
+        N.toLearningPage(
+            vocabularies: BaseHelper.selectWordToLearn(
+          vocabularies,
+          isReview: true,
+        ));
+      }
     }
   }
 }

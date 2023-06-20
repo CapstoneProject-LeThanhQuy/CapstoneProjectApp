@@ -8,7 +8,7 @@ import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 part 'widget.g.dart';
 
 @swidget
-Widget targetItem({required Target target}) {
+Widget targetItem({required Target target, required Function() onPressed}) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 5),
     decoration: BoxDecoration(
@@ -40,7 +40,9 @@ Widget targetItem({required Target target}) {
                   CupertinoButton(
                     alignment: Alignment.topRight,
                     padding: EdgeInsets.zero,
-                    onPressed: () {},
+                    onPressed: () {
+                      onPressed.call();
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(

@@ -40,48 +40,34 @@ class LearningPage extends BaseWidget<LearningController> {
               ),
             ),
             body: controller.vocabularies.isNotEmpty && !controller.isCompleted.value
-                ? controller.isReview.value
-                    ? ReviewWordItem(
-                        onComplete: () {
-                          controller.speechText(
-                            completed: () {
-                              controller.nextWord();
-                            },
+                ? controller.isSpeakLearn.value
+                    ? SpeakingWordItem(
+                        onPressedListening: () {
+                          controller.listeningSpeech(
+                            controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
                           );
                         },
+                        onPressedPlaySound: () {
+                          controller.speechText();
+                        },
                         vocabulary: controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
-                        listKeyReview: controller.listKeyReview,
+                        isSpeaking: controller.isSpeakingToText.value,
                       )
-                    : controller.currentType.value == TypeLearning.newWord
-                        ? NewWordItem(
-                            onPressedNext: () {
-                              controller.nextWord();
-                            },
-                            onPressedPlaySound: () {
-                              controller.speechText();
+                    : controller.isReview.value
+                        ? ReviewWordItem(
+                            onComplete: () {
+                              controller.speechText(
+                                completed: () {
+                                  controller.nextWord();
+                                },
+                              );
                             },
                             vocabulary:
                                 controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                            listKeyReview: controller.listKeyReview,
                           )
-                        : controller.currentType.value == TypeLearning.learningWord
-                            ? LearningWordItem(
-                                onPressedAnswer: (isConrrect) {
-                                  controller.speechText(
-                                    completed: () {
-                                      if (isConrrect) {
-                                        controller.nextWord();
-                                      } else {
-                                        controller.learningWord(isDifficultWord: true);
-                                      }
-                                    },
-                                  );
-                                },
-                                vocabulary:
-                                    controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
-                                anotherAnswers: controller.anotherAnswers,
-                                chooseVietnamese: controller.chooseVietnamese,
-                              )
-                            : DifficultWordItem(
+                        : controller.currentType.value == TypeLearning.newWord
+                            ? NewWordItem(
                                 onPressedNext: () {
                                   controller.nextWord();
                                 },
@@ -91,6 +77,34 @@ class LearningPage extends BaseWidget<LearningController> {
                                 vocabulary:
                                     controller.vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
                               )
+                            : controller.currentType.value == TypeLearning.learningWord
+                                ? LearningWordItem(
+                                    onPressedAnswer: (isConrrect) {
+                                      controller.speechText(
+                                        completed: () {
+                                          if (isConrrect) {
+                                            controller.nextWord();
+                                          } else {
+                                            controller.learningWord(isDifficultWord: true);
+                                          }
+                                        },
+                                      );
+                                    },
+                                    vocabulary: controller
+                                        .vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                                    anotherAnswers: controller.anotherAnswers,
+                                    chooseVietnamese: controller.chooseVietnamese,
+                                  )
+                                : DifficultWordItem(
+                                    onPressedNext: () {
+                                      controller.nextWord();
+                                    },
+                                    onPressedPlaySound: () {
+                                      controller.speechText();
+                                    },
+                                    vocabulary: controller
+                                        .vocabularies[controller.listIndexRandom[controller.currentIndex.value]],
+                                  )
                 : Container(
                     color: ColorName.whiteFff,
                     child: const LoadingWidget(

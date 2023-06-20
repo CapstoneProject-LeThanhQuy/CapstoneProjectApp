@@ -8,6 +8,8 @@ class Target {
   int targetWord;
   List<int> listNewWords;
   List<int> listReviewedWords;
+  List<int> listReviewedWordsTime;
+  List<int> listNewWordsTime;
 
   Target({
     required this.record,
@@ -19,6 +21,8 @@ class Target {
     required this.targetWord,
     required this.listNewWords,
     required this.listReviewedWords,
+    required this.listReviewedWordsTime,
+    required this.listNewWordsTime,
   });
 
   Map<String, dynamic> toJson() {
@@ -32,6 +36,8 @@ class Target {
       '"targetWord"': targetWord,
       '"listNewWords"': listNewWords,
       '"listReviewedWords"': listReviewedWords,
+      '"listReviewedWordsTime"': listReviewedWordsTime,
+      '"listNewWordsTime"': listNewWordsTime,
     };
   }
 
@@ -46,6 +52,8 @@ class Target {
       targetWord: json["targetWord"],
       listNewWords: (json['listNewWords'] as List).map((e) => e as int).toList(),
       listReviewedWords: (json['listReviewedWords'] as List).map((e) => e as int).toList(),
+      listReviewedWordsTime: (json['listReviewedWordsTime'] as List).map((e) => e as int).toList(),
+      listNewWordsTime: (json['listNewWordsTime'] as List).map((e) => e as int).toList(),
     );
   }
 }
