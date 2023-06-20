@@ -40,4 +40,7 @@ abstract class CourseAPI {
 
   @GET('/course/my-follow')
   Future<ListCourseModel> getAllCourseFllow();
+
+  @GET('/course/course-by-public-id')
+  Future<ListCourseModel> getCourseWithPublicId(@Query('course_id') String request);
 }

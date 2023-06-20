@@ -6,6 +6,7 @@ class StorageServiceImpl implements StorageService {
   final _sharedPreferences = SharedPreferences.getInstance();
   final String targetKey = "TARGET_KEY";
   final String currentCourseKey = "CURRENT_COURSE_KEY";
+  final String myWordsKey = "MY_WORDS_KEY";
 
   @override
   Future<void> setToken(String token) async {
@@ -45,5 +46,15 @@ class StorageServiceImpl implements StorageService {
   @override
   Future<void> setCurrentCourse(String course) async {
     (await _sharedPreferences).setString(currentCourseKey, course);
+  }
+
+  @override
+  Future<void> setMyWord(String myWords) async {
+    (await _sharedPreferences).setString(myWordsKey, myWords);
+  }
+
+  @override
+  Future<String> getMyWord() async {
+    return (await _sharedPreferences).getString(myWordsKey) ?? "";
   }
 }

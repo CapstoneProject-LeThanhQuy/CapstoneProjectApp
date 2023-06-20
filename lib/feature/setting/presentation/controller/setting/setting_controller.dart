@@ -8,10 +8,31 @@ import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
 import 'package:easy_english/utils/services/storage_service.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SettingController extends BaseController {
   final StorageService _storageService;
+
+  final refreshController = RefreshController(initialRefresh: false);
+  Rx<AccountModel> accountInfo = Rx<AccountModel>(AccountModel());
+  var isLoading = false.obs;
+
   SettingController(this._storageService);
+
+  @override
+  void onInit() {
+    super.onInit();
+    accountInfo.value = AppConfig.accountInfo;
+  }
+
+  void onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  void onLoading() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    refreshController.loadComplete();
+  }
 
   void logoutEasyEnglish() {
     AwesomeDialog(

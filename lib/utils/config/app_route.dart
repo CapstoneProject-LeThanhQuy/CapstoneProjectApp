@@ -25,6 +25,8 @@ import 'package:easy_english/feature/course/presentation/view/learning_difficult
 import 'package:easy_english/feature/course/presentation/view/learning_difficult_words/learning_difficult_words_page.dart';
 import 'package:easy_english/feature/course/presentation/view/preview_image/preview_image_bindings.dart';
 import 'package:easy_english/feature/course/presentation/view/preview_image/preview_image_page.dart';
+import 'package:easy_english/feature/game/presentation/view/game_play/game_play_bindings.dart';
+import 'package:easy_english/feature/game/presentation/view/game_play/game_play_page.dart';
 import 'package:easy_english/feature/home/presentation/view/home_course_detail/home_course_detail_bindings.dart';
 import 'package:easy_english/feature/home/presentation/view/home_course_detail/home_course_detail_page.dart';
 import 'package:easy_english/feature/home/presentation/view/vocabulary_detail/vocabulary_detail_bindings.dart';
@@ -55,6 +57,7 @@ class AppRoute {
   static String vocabularyDetail = '/vocabularyDetail';
   static String learnDifficultWord = '/learnDifficultWord';
   static String learningDifficult = '/learningDifficult';
+  static String gamePlay = '/gamePlay';
 
   static List<GetPage> generateGetPages = [
     GetPage(
@@ -163,6 +166,12 @@ class AppRoute {
       name: learningDifficult,
       page: LearningDifficultPage.new,
       binding: LearningDifficultBindings(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: gamePlay,
+      page: GamePlayPage.new,
+      binding: GamePlayBindings(),
       transition: Transition.cupertino,
     ),
   ];

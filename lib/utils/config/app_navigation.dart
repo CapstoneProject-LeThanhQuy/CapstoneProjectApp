@@ -75,4 +75,8 @@ class N {
   static void toLearningDifficult({RouteType type = RouteType.to, required Vocabulary vocabulary}) {
     type.navigate(name: AppRoute.learningDifficult, arguments: vocabulary);
   }
+
+  static void toGamePlay({RouteType type = RouteType.to, required List<Vocabulary> vocabularies}) {
+    type.navigate(name: AppRoute.gamePlay, arguments: vocabularies);
+  }
 }

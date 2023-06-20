@@ -9,6 +9,7 @@ import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/extension/form_builder.dart';
 import 'package:easy_english/utils/gen/assets.gen.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:get/get.dart';
@@ -840,6 +841,204 @@ Widget reviewWordItem({
           ),
         ],
       ),
+    ),
+  );
+}
+
+@swidget
+Widget speakingWordItem({
+  void Function()? onPressedListening,
+  void Function()? onPressedPlaySound,
+  required Vocabulary vocabulary,
+  required bool isSpeaking,
+}) {
+  return Container(
+    color: ColorName.whiteFff,
+    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+    margin: const EdgeInsets.symmetric(vertical: 3),
+    child: Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          if (onPressedPlaySound != null) {
+                            onPressedPlaySound.call();
+                          }
+                        },
+                        child: const Icon(
+                          CupertinoIcons.speaker_3_fill,
+                          color: ColorName.primaryColor,
+                          size: 35,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  vocabulary.englishText,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.w600s30(ColorName.primaryColor),
+                ),
+                const SizedBox(height: 25),
+                vocabulary.image.isNotEmpty
+                    ? Container(
+                        constraints: const BoxConstraints(maxHeight: 180),
+                        child: CachedNetworkImage(
+                          width: double.infinity,
+                          imageUrl: vocabulary.image,
+                          fit: BoxFit.fitHeight,
+                          maxHeightDiskCache: 300,
+                          placeholder: (context, url) => const SizedBox(
+                            height: 120,
+                            width: 120,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Assets.images.logoIcon.image(width: 120, height: 120, fit: BoxFit.cover),
+                        ),
+                      )
+                    : Assets.images.logoIcon.image(width: 120, height: 120, fit: BoxFit.cover),
+                const SizedBox(height: 55),
+                const Divider(
+                  height: 1,
+                  color: ColorName.primaryColor,
+                  thickness: 1,
+                ),
+                const SizedBox(height: 25),
+                Text(
+                  'NGHĨA',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.w500s12(ColorName.gray838),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  vocabulary.vietnameseText,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.w700s20(ColorName.gray4f4),
+                ),
+                Text(
+                  '[${vocabulary.wordType}]',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.w700s20(ColorName.green27b),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: ColorName.whiteFff,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5,
+                          value: vocabulary.progress / AppConfig.currentCourse.progress,
+                          color: ColorName.primaryColor.withOpacity(0.8),
+                          backgroundColor: ColorName.primaryColor.withOpacity(0.2),
+                          semanticsLabel: 'Linear progress indicator',
+                        ),
+                      ),
+                      Container(
+                        height: 50,
+                        width: 50,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            CupertinoIcons.book_solid,
+                            color: ColorName.primaryColor,
+                          ),
+                        ),
+                      ),
+                      if (vocabulary.difficult > 0) const SizedBox(width: 25),
+                      if (vocabulary.difficult > 0)
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: ColorName.whiteFff,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 5,
+                                  value: (5 - vocabulary.difficult) / 5,
+                                  color: ColorName.purpleDf8.withOpacity(0.8),
+                                  backgroundColor: ColorName.primaryColor.withOpacity(0.2),
+                                  semanticsLabel: 'Linear progress indicator',
+                                ),
+                              ),
+                              Container(
+                                height: 50,
+                                width: 50,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    CupertinoIcons.bolt_circle_fill,
+                                    color: ColorName.purpleDf8,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 35),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.only(left: 8, right: 8),
+          color: Colors.transparent,
+          child: AvatarGlow(
+            animate: isSpeaking,
+            endRadius: 60,
+            glowColor: ColorName.primaryColor,
+            child: CupertinoButton(
+              onPressed: () {
+                if (!isSpeaking) {
+                  if (onPressedListening != null) {
+                    onPressedListening.call();
+                  }
+                }
+              },
+              child: const Icon(
+                CupertinoIcons.mic_solid,
+                color: ColorName.primaryColor,
+                size: 50,
+              ),
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

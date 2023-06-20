@@ -51,10 +51,16 @@ class CourseRepoImpl implements CourseRepo {
     return _courseApi.followCourse(request);
   }
 
-
   @override
   Future<List<CourseModel>> getAllCourseFllow() async {
     ListCourseModel listCourseModel = await _courseApi.getAllCourseFllow();
+
+    return (listCourseModel.courses ?? []).map((course) => CourseModel.fromMap(course)).toList();
+  }
+
+  @override
+  Future<List<CourseModel>> getCourseWithPublicId(String request) async {
+    ListCourseModel listCourseModel = await _courseApi.getCourseWithPublicId(request);
 
     return (listCourseModel.courses ?? []).map((course) => CourseModel.fromMap(course)).toList();
   }

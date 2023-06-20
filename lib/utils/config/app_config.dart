@@ -5,13 +5,14 @@ import 'package:easy_english/feature/course/data/models/course_level.dart';
 import 'package:easy_english/feature/home/data/models/target.dart';
 
 class AppConfig {
-  static const baseUrl = 'http://10.0.2.2:5000/';
+  static const baseUrl = 'http://192.168.1.4:5000/';
   static const keyToken = 'Authentication Token';
   static TokenModel tokenInfo = TokenModel();
   static AccountModel accountInfo = AccountModel();
   static Course currentCourse = Course(0, 0, '', '', '', 0, 0, 0, 0, 0);
   static CourseLevel currentCourseLevel = CourseLevel(0, 0, '', 0, 0, 0);
   static bool isReview = false;
+  static bool isSpeakLearn = false;
   static List<String> listTypeWord = <String>[
     'Noun',
     'Pronoun',
@@ -42,5 +43,7 @@ class AppConfig {
     targetWord: 20,
     listNewWords: [],
     listReviewedWords: [],
+    listReviewedWordsTime: [],
+    listNewWordsTime: [],
   );
 }

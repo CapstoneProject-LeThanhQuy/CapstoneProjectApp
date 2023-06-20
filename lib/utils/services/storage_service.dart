@@ -9,4 +9,7 @@ abstract class StorageService {
 
   Future<void> setCurrentCourse(String course);
   Future<String> getCurrentCourse();
+
+  Future<void> setMyWord(String myWords);
+  Future<String> getMyWord();
 }

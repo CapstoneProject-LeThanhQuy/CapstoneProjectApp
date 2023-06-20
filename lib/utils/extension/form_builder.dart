@@ -22,6 +22,8 @@ enum FormFieldType {
   vietnameseText,
   addAutoVocabulary,
   reviewWord,
+  publicID,
+  searchWord,
 }
 
 extension FormFieldTypeExtension on FormFieldType {
@@ -87,6 +89,10 @@ extension FormFieldTypeExtension on FormFieldType {
         return 'Xin chào';
       case FormFieldType.addAutoVocabulary:
         return 'https://example.txt or Aaa...';
+      case FormFieldType.publicID:
+        return 'Mã khóa học';
+      case FormFieldType.searchWord:
+        return 'Tìm kiếm từ vựng';
       default:
         return '';
     }

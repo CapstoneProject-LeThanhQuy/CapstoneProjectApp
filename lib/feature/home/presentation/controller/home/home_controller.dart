@@ -12,6 +12,7 @@ import 'package:easy_english/feature/course/data/models/course_model.dart';
 import 'package:easy_english/feature/course/data/models/vocabulary.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/get_all_course_request.dart';
 import 'package:easy_english/feature/course/domain/usecases/get_all_course_usecase.dart';
+import 'package:easy_english/feature/course/domain/usecases/get_course_with_public_id_usecase.dart';
 import 'package:easy_english/feature/home/data/models/target.dart';
 import 'package:easy_english/utils/config/app_config.dart';
 import 'package:easy_english/utils/config/app_navigation.dart';
@@ -27,11 +28,13 @@ class HomeController extends BaseController {
   final GetVocabulariesWithCourseLocalUsecase _getVocabulariesWithCourseLocalUsecase;
   final GetCourseLocalUsecase _getCourseLocalUsecase;
   final StorageService _storageService;
+  final GetCourseWithPublicIdUsecase _getCourseWithPublicIdUsecase;
   HomeController(
     this._getAllCourseUsecase,
     this._getCourseLocalUsecase,
     this._storageService,
     this._getVocabulariesWithCourseLocalUsecase,
+    this._getCourseWithPublicIdUsecase,
   );
 
   RxBool isLoading = false.obs;
@@ -55,6 +58,8 @@ class HomeController extends BaseController {
     targetWord: 20,
     listNewWords: [],
     listReviewedWords: [],
+    listNewWordsTime: [],
+    listReviewedWordsTime: [],
   ).obs;
 
   @override
@@ -77,9 +82,10 @@ class HomeController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 300));
     page = 0;
     isEnd = false;
+    isSearching.value = false;
     listCourse = RxList.empty();
     localCourses = RxList.empty();
-
+    if (!isShowComplete) showCompleteTarget();
     getData();
   }
 
@@ -152,9 +158,10 @@ class HomeController extends BaseController {
           Target localTarget = Target.fromJson(jsonDecode(value));
           localTarget.newWords = localTarget.listNewWords.length;
           localTarget.learnedWords = localTarget.listReviewedWords.length;
-          localTarget.time = (localTarget.newWords + localTarget.learnedWords) ~/ 12;
+          localTarget.time = (localTarget.listNewWordsTime.length + localTarget.listReviewedWordsTime.length) ~/ 24;
           target = localTarget.obs;
           AppConfig.currentTarget = localTarget;
+          print(localTarget.toJson());
         } else {
           _storageService.setTarget(
             Target(
@@ -167,6 +174,8 @@ class HomeController extends BaseController {
               targetWord: 20,
               listNewWords: [],
               listReviewedWords: [],
+              listReviewedWordsTime: [],
+              listNewWordsTime: [],
             ).toJson().toString(),
           );
         }
@@ -198,10 +207,10 @@ class HomeController extends BaseController {
             targetWord: target.value.targetWord,
             listNewWords: [],
             listReviewedWords: [],
+            listReviewedWordsTime: [],
+            listNewWordsTime: [],
           ).obs;
-          _storageService.setTarget(
-            target.value.toJson().toString(),
-          );
+          _storageService.setTarget(target.value.toJson().toString());
         }
       },
     );
@@ -209,7 +218,7 @@ class HomeController extends BaseController {
 
   RxList<Course> localCourses = RxList.empty();
   void getData() {
-    if (!isShowComplete) showCompleteTarget();
+    AppConfig.isSpeakLearn = false;
     getDataTarget();
     getCurrentCourse();
     _getCourseLocalUsecase.execute(
@@ -318,32 +327,84 @@ class HomeController extends BaseController {
   }
 
   void learnDifficultWord() {
-    if (curentCourse.value.totalWords > 0 && BaseHelper.totalWordDifficult(allVocabularies) > 0) {
-      AppConfig.currentCourse = curentCourse.value;
-      N.toLearnDifficultWord(vocabularies: BaseHelper.allWordDifficult(allVocabularies));
+    if (allVocabularies.isNotEmpty) {
+      if (curentCourse.value.totalWords > 0 && BaseHelper.totalWordDifficult(allVocabularies) > 0) {
+        AppConfig.currentCourse = curentCourse.value;
+        AppConfig.isSpeakLearn = false;
+        N.toLearnDifficultWord(vocabularies: BaseHelper.allWordDifficult(allVocabularies));
+      }
     }
   }
 
   void reviewLearnedWord() {
-    if (curentCourse.value.totalWords > 0 && curentCourse.value.learnedWords > 0) {
-      AppConfig.currentCourse = curentCourse.value;
-      N.toLearningPage(
-        vocabularies: BaseHelper.selectWordToLearn(
-          allVocabularies,
-          isReview: true,
-        ),
-      );
+    if (allVocabularies.isNotEmpty) {
+      if (curentCourse.value.totalWords > 0 && curentCourse.value.learnedWords > 0) {
+        AppConfig.currentCourse = curentCourse.value;
+        AppConfig.isSpeakLearn = false;
+        N.toLearningPage(
+          vocabularies: BaseHelper.selectWordToLearn(
+            allVocabularies,
+            isReview: true,
+          ),
+        );
+      }
     }
   }
 
   void speakLearnedWord() {
-    if (curentCourse.value.totalWords > 0 && curentCourse.value.learnedWords > 0) {
-      AppConfig.currentCourse = curentCourse.value;
-      N.toLearningPage(
-          vocabularies: BaseHelper.selectWordToLearn(
-        allVocabularies,
-        isReview: true,
-      ));
+    if (allVocabularies.isNotEmpty) {
+      if (curentCourse.value.totalWords > 0 && curentCourse.value.learnedWords > 0) {
+        AppConfig.currentCourse = curentCourse.value;
+        AppConfig.isSpeakLearn = true;
+        N.toLearningPage(
+            vocabularies: BaseHelper.selectWordToLearn(
+          allVocabularies,
+          isReview: true,
+        ));
+      }
     }
+  }
+
+  void updateTarget(int numberTarget) {
+    target.value.targetWord = numberTarget;
+    target.refresh();
+    _storageService.setTarget(target.value.toJson().toString());
+  }
+
+  RxBool isSearching = false.obs;
+  void onSearch(String value) {
+    isLoading.value = true;
+    listCourse = RxList.empty();
+    _getCourseWithPublicIdUsecase.execute(
+      observer: Observer(
+        onSubscribe: () {},
+        onSuccess: (courses) async {
+          await Future.delayed(const Duration(milliseconds: 1000));
+          isLoading.value = false;
+          isEnd = true;
+          listCourse.addAll(courses);
+
+          for (var course in localCourses) {
+            listCourse.removeWhere((element) => element.id == course.id);
+          }
+        },
+        onError: (e) {
+          if (e is DioError) {
+            if (e.response?.data != null) {
+              BaseHelper.tokenError(e);
+            } else {
+              _showToastMessage(e.message ?? 'error');
+            }
+          }
+          if (kDebugMode) {
+            print(e.toString());
+          }
+
+          isLoading.value = false;
+          refreshController.refreshCompleted();
+        },
+      ),
+      input: value,
+    );
   }
 }
