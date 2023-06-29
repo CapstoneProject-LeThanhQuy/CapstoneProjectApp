@@ -91,6 +91,46 @@ class GamePage extends BaseWidget<GameController> {
                               width: Get.width,
                             ),
                             Text(
+                              "Điểm: 1530",
+                              style: AppTextStyle.w700s16(ColorName.black000),
+                              textAlign: TextAlign.start,
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Thành tích cao nhất: 3500",
+                              style: AppTextStyle.w700s16(ColorName.black000),
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        color: Colors.transparent,
+                        child: CommonButton(
+                          height: 50,
+                          onPressed: () {
+                            controller.playVideoGame();
+                          },
+                          fillColor: ColorName.primaryColor,
+                          child: Text(
+                            'Bắt đầu trò chơi',
+                            style: AppTextStyle.w700s18(ColorName.whiteFff),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        color: ColorName.grayF4f,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 15,
+                              width: Get.width,
+                            ),
+                            Text(
                               "Từ vựng được tìm kiếm",
                               style: AppTextStyle.w600s15(ColorName.black000),
                               textAlign: TextAlign.start,

@@ -1,3 +1,4 @@
+import 'package:easy_english/base/presentation/base_controller.dart';
 import 'package:easy_english/feature/authentication/data/models/account_model.dart';
 import 'package:easy_english/feature/authentication/data/models/token_model.dart';
 import 'package:easy_english/feature/course/data/models/course.dart';
@@ -5,7 +6,7 @@ import 'package:easy_english/feature/course/data/models/course_level.dart';
 import 'package:easy_english/feature/home/data/models/target.dart';
 
 class AppConfig {
-  static const baseUrl = 'http://192.168.1.4:5000/';
+  static const baseUrl = 'http://159.223.52.44:5000/';
   static const keyToken = 'Authentication Token';
   static TokenModel tokenInfo = TokenModel();
   static AccountModel accountInfo = AccountModel();
@@ -46,4 +47,8 @@ class AppConfig {
     listReviewedWordsTime: [],
     listNewWordsTime: [],
   );
+
+  // Game
+
+  static RxString currentCharacter = ''.obs;
 }

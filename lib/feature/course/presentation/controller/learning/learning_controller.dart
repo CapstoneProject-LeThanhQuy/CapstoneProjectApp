@@ -89,6 +89,7 @@ class LearningController extends BaseController<List<Vocabulary>> {
               .toList();
           vocabularies.value = input;
           AppConfig.isReview = vocabularies.firstWhereOrNull((vocabulary) => vocabulary.progress == 0) == null;
+          isReview.value = AppConfig.isReview;
           isSpeakLearn.value = AppConfig.isSpeakLearn;
           if (input.length < 5) {
             listIndexRandom = [];

@@ -127,6 +127,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/logo_icon.png
     - assets/words_alpha.txt
 
   fonts:
