@@ -258,11 +258,11 @@ class HomeCourseDetailPage extends BaseWidget<HomeCourseDetailController> {
                                 padding: EdgeInsets.zero,
                                 onPressed: () {},
                                 child: const Text(
-                                  'More',
+                                  'Xem thêm',
                                   style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     fontSize: 16,
-                                    color: ColorName.primaryColor,
+                                  color: ColorName.primaryColor,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
