@@ -5,13 +5,15 @@ import 'package:easy_english/base/data/local/model/vocabulary_local_model.dart';
 import 'package:easy_english/base/domain/usecases/get_vocabularies_withlevel_local_usecase.dart';
 import 'package:easy_english/base/domain/usecases/update_course_local_usecase.dart';
 import 'package:easy_english/base/presentation/base_controller.dart';
+import 'package:easy_english/base/presentation/base_helper.dart';
 import 'package:easy_english/base/presentation/speech_to_text.dart';
 import 'package:easy_english/base/presentation/text_to_speech.dart';
 import 'package:easy_english/feature/course/data/models/vocabulary.dart';
+import 'package:easy_english/feature/course/data/providers/remote/request/learing_course_request.dart';
+import 'package:easy_english/feature/course/domain/usecases/learing_course_usecase.dart';
 import 'package:easy_english/feature/course/presentation/controller/course/course_controller.dart';
 import 'package:easy_english/feature/course/presentation/controller/course_detail/course_detail_controller.dart';
 import 'package:easy_english/feature/course/presentation/controller/course_vocabulary/course_vocabulary_controller.dart';
-import 'package:easy_english/feature/course/presentation/view/learning/widgets/widget.dart';
 import 'package:easy_english/feature/home/data/models/target.dart';
 import 'package:easy_english/feature/home/presentation/controller/home/home_controller.dart';
 import 'package:easy_english/utils/config/app_config.dart';
@@ -27,10 +29,13 @@ class LearningController extends BaseController<List<Vocabulary>> {
   final GetVocabulariesWithCourseLocalUsecase _getVocabulariesWithCourseLocalUsecase;
   final StorageService _storageService;
   final UpdateCourseLocalUsecase _updateCourseLocalUsecase;
+  final LearingCourseUsecase _learingCourseUsecase;
+
   LearningController(
     this._getVocabulariesWithCourseLocalUsecase,
     this._updateCourseLocalUsecase,
     this._storageService,
+    this._learingCourseUsecase,
   );
 
   var maxIndex = 12;
@@ -58,7 +63,9 @@ class LearningController extends BaseController<List<Vocabulary>> {
   void onInit() {
     super.onInit();
     getAllVocabularies();
-    _storageService.setCurrentCourse(AppConfig.currentCourse.toJsonLocal().toString()).then((value) {
+    _storageService
+        .setCurrentCourse(AppConfig.currentCourse.toJsonLocal(AppConfig.accountInfo.id ?? 0).toString())
+        .then((value) {
       Get.find<HomeController>().getCurrentCourse();
     });
   }
@@ -92,6 +99,10 @@ class LearningController extends BaseController<List<Vocabulary>> {
           isReview.value = AppConfig.isReview;
           isSpeakLearn.value = AppConfig.isSpeakLearn;
           if (input.length < 5) {
+            if (input.length < 3) {
+              systemNumberVocabulary();
+              return;
+            }
             listIndexRandom = [];
             for (var i = 0; i < input.length; i++) {
               listIndexRandom.add(i);
@@ -263,7 +274,12 @@ class LearningController extends BaseController<List<Vocabulary>> {
     }
 
     target.record = max(target.record, target.consecutiveDays);
-    _storageService.setTarget(target.toJson().toString()).then(
+    _storageService
+        .setTarget(
+      target.toJson().toString(),
+      AppConfig.accountInfo.id ?? 0,
+    )
+        .then(
       (value) {
         Get.find<HomeController>().onRefresh();
       },
@@ -294,27 +310,44 @@ class LearningController extends BaseController<List<Vocabulary>> {
         AppConfig.currentCourse.learnedWords = AppConfig.currentCourse.learnedWords + learnedWord;
       }
       AppConfig.currentCourse.point = AppConfig.currentCourse.point + point.value;
-      _updateCourseLocalUsecase.execute(
+      _learingCourseUsecase.execute(
         observer: Observer(
           onSuccess: (val) {
-            if (kDebugMode) {
-              print('Gettttttttttttttttttttttttttt');
-              print(val);
-            }
             if (val) {
-              updateTarget();
-              if (Get.isRegistered<CourseVocabularyController>()) {
-                Get.find<CourseVocabularyController>().onGetListVocabularyWithLevel(vocabularyList.first.levelId!);
-              }
-              if (Get.isRegistered<CourseDetailController>()) {
-                Get.find<CourseDetailController>().onGetListCourseLevel(AppConfig.currentCourse.id);
-              }
-              if (Get.isRegistered<CourseController>()) {
-                Get.find<CourseController>().onGetListCourse();
-              }
-              Get.find<HomeController>().getCurrentCourse();
+              _updateCourseLocalUsecase.execute(
+                observer: Observer(
+                  onSuccess: (val) {
+                    if (val) {
+                      updateTarget();
+                      if (Get.isRegistered<CourseVocabularyController>()) {
+                        Get.find<CourseVocabularyController>()
+                            .onGetListVocabularyWithLevel(vocabularyList.first.levelId!);
+                      }
+                      if (Get.isRegistered<CourseDetailController>()) {
+                        Get.find<CourseDetailController>().onGetListCourseLevel(AppConfig.currentCourse.id);
+                      }
+                      if (Get.isRegistered<CourseController>()) {
+                        Get.find<CourseController>().onGetListCourse();
+                      }
+                      Get.find<HomeController>().getCurrentCourse();
 
-              Get.back();
+                      Get.back();
+                    } else {
+                      systemError();
+                    }
+                  },
+                  onError: (e) async {
+                    systemError();
+                    print(e);
+                  },
+                ),
+                input: CourseUpdateLocal(
+                  point: AppConfig.currentCourse.point,
+                  levelLearnedWord: AppConfig.currentCourseLevel.learnedWords,
+                  courseLearnedWord: AppConfig.currentCourse.learnedWords,
+                  vocabularyList: vocabularyList,
+                ),
+              );
             } else {
               systemError();
             }
@@ -324,11 +357,11 @@ class LearningController extends BaseController<List<Vocabulary>> {
             print(e);
           },
         ),
-        input: CourseUpdateLocal(
-          point: AppConfig.currentCourse.point,
-          levelLearnedWord: AppConfig.currentCourseLevel.learnedWords,
-          courseLearnedWord: AppConfig.currentCourse.learnedWords,
-          vocabularyList: vocabularyList,
+        input: LearingCourseRequest(
+          AppConfig.currentCourse.id,
+          AppConfig.currentCourse.point,
+          BaseHelper.totalWordDifficult(vocabularies),
+          AppConfig.currentCourse.learnedWords,
         ),
       );
     } catch (e) {
@@ -403,6 +436,21 @@ class LearningController extends BaseController<List<Vocabulary>> {
       },
     ).show();
   }
+}
+
+void systemNumberVocabulary() async {
+  AwesomeDialog(
+    context: Get.context!,
+    dialogType: DialogType.error,
+    title: 'ERROR',
+    desc: 'Khóa học quá ít từ vựng không thể tiến hành học tập!',
+    descTextStyle: AppTextStyle.w600s17(ColorName.black000),
+    btnOkText: 'Okay',
+    btnOkOnPress: () {},
+    onDismissCallback: (_) {
+      Get.back();
+    },
+  ).show();
 }
 
 enum TypeLearning {

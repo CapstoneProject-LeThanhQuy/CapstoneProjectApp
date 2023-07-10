@@ -7,6 +7,7 @@ import 'package:easy_english/feature/home/data/models/target.dart';
 
 class AppConfig {
   static const baseUrl = 'http://159.223.52.44:5000/';
+  // static const baseUrl = 'http://10.0.2.2:5000/';
   static const keyToken = 'Authentication Token';
   static TokenModel tokenInfo = TokenModel();
   static AccountModel accountInfo = AccountModel();
@@ -51,4 +52,18 @@ class AppConfig {
   // Game
 
   static RxString currentCharacter = ''.obs;
+  static RxInt currenPoint = 0.obs;
+  static RxInt bestScore = 0.obs;
+
+  static Rx<StypeViewDetail> currentViewDetail = StypeViewDetail.normal.obs;
+
+  static List<String> listRate = <String>[
+    '1. Tệ',
+    '2. Chưa được tốt',
+    '3. Tạm ổn',
+    '4. Hài lòng',
+    '5. Rất hài lòng',
+  ];
 }
+
+enum StypeViewDetail { myCourse, followCourse, normal }

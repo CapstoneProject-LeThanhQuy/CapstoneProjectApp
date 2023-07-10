@@ -1,16 +1,34 @@
 class RegisterRequest {
   String? phoneNumber;
+  String? email;
+  bool? gender;
+  String? username;
   String? password;
-  int? role;
   String? verificationId;
 
-  RegisterRequest(this.phoneNumber, this.password, this.role, {this.verificationId});
+  RegisterRequest(
+    this.phoneNumber,
+    this.email,
+    this.gender,
+    this.username,
+    this.password, {
+    this.verificationId,
+  });
 
   Map<String, dynamic> toJson() {
+    if (phoneNumber != null) {
+      return {
+        'phone_number': phoneNumber,
+        'gender': gender,
+        'username': username,
+        'password': password,
+      };
+    }
     return {
-      'phone_number': phoneNumber,
+      'email': email,
+      'gender': gender,
+      'username': username,
       'password': password,
-      'role': role,
     };
   }
 }

@@ -73,6 +73,9 @@ class CoursePage extends BaseWidget<CourseController> {
                             itemBuilder: (context, index) {
                               return CourseItem(
                                 course: controller.myCourses[index],
+                                onPressedDetail: () {
+                                  controller.toCourseDetailMyCourse(index);
+                                },
                                 onPressed: () {
                                   controller.toCourseUpdate(index);
                                 },
@@ -126,6 +129,9 @@ class CoursePage extends BaseWidget<CourseController> {
                             itemCount: controller.localCourses.length,
                             itemBuilder: (context, index) {
                               return CourseItem(
+                                onPressedDetail: () {
+                                  controller.toCourseDetailFollow(index);
+                                },
                                 course: controller.localCourses[index],
                                 onPressed: () {
                                   AppConfig.currentCourse = controller.localCourses[index];
@@ -184,6 +190,9 @@ class CoursePage extends BaseWidget<CourseController> {
                             itemBuilder: (context, index) {
                               return CourseItem(
                                 course: controller.followCourses[index],
+                                onPressedDetail: () {
+                                  controller.toCourseDetail(index);
+                                },
                                 onPressed: () {
                                   controller.toCourseDetail(index);
                                 },

@@ -16,7 +16,7 @@ abstract class AuthAPI {
   Future<TokenModel> login(@Body() LoginRequest request);
 
   @POST('/auth/register')
-  Future<TokenModel> register(@Body() RegisterRequest request);
+  Future<bool> register(@Body() RegisterRequest request);
 
   @GET('/auth/info')
   Future<AccountModel> getAccount();

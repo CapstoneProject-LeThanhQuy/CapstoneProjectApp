@@ -38,6 +38,17 @@ class Vocabulary {
     };
   }
 
+  Map<String, dynamic> toJsonLocal() {
+    return {
+      '"id"': id,
+      '"english_text"': '"$englishText"',
+      '"vietnamese_text"': '"$vietnameseText"',
+      '"image"': '"$image"',
+      '"level_id"': levelId,
+      '"word_type"': '"$wordType"',
+    };
+  }
+
   Map<String, dynamic> toJsonView() {
     return {
       'id': id,

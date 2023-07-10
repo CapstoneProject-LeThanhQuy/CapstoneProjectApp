@@ -5,6 +5,6 @@ import 'package:easy_english/feature/authentication/data/providers/remote/reques
 
 abstract class AuthRepo {
   Future<TokenModel> login(LoginRequest request);
-  Future<TokenModel> register(RegisterRequest request);
+  Future<bool> register(RegisterRequest request);
   Future<AccountModel> getAccount();
 }

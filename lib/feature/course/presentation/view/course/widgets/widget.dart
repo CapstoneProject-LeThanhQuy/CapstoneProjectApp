@@ -16,7 +16,12 @@ enum TypeCourse {
 }
 
 @swidget
-Widget courseItem({void Function()? onPressed, required Course course, required TypeCourse typeCourse}) {
+Widget courseItem({
+  void Function()? onPressed,
+  void Function()? onPressedDetail,
+  required Course course,
+  required TypeCourse typeCourse,
+}) {
   return Container(
     color: ColorName.whiteFff,
     height: 80,
@@ -81,8 +86,12 @@ Widget courseItem({void Function()? onPressed, required Course course, required 
                     ),
                     const SizedBox(width: 15),
                     GestureDetector(
-                      onTap: () {},
-                      child: Assets.images.menuDotsIcon.image(width: 20),
+                      onTap: () {
+                        if (onPressedDetail != null) {
+                          onPressedDetail.call();
+                        }
+                      },
+                      child: Assets.images.menuDotsIcon.image(width: 25),
                     ),
                     const SizedBox(width: 2),
                   ],

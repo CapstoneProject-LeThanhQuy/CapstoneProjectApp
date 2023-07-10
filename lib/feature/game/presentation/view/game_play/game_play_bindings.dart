@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class GamePlayBindings implements Bindings {
   @override
   void dependencies() {
-    Get.put(GamePlayController());
+    Get.put(GamePlayController(Get.find()));
   }
 }

@@ -9,6 +9,7 @@ class Course {
   int member;
   int point;
   int progress;
+  int? userId;
 
   Course(
     this.id,
@@ -20,8 +21,9 @@ class Course {
     this.learnedWords,
     this.member,
     this.progress,
-    this.point,
-  );
+    this.point, {
+    this.userId,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -34,7 +36,7 @@ class Course {
     };
   }
 
-  Map<String, dynamic> toJsonLocal() {
+  Map<String, dynamic> toJsonLocal(int userId) {
     return {
       '"id"': id,
       '"title"': '"$title"',
@@ -46,6 +48,7 @@ class Course {
       '"member"': member,
       '"point"': point,
       '"publicId"': publicId,
+      '"user_id"': userId,
     };
   }
 
@@ -61,6 +64,7 @@ class Course {
       json["member"],
       json["progress"],
       json["point"],
+      userId: json["user_id"] ?? -1,
     );
   }
 }

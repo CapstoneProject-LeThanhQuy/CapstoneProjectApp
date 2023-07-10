@@ -15,7 +15,7 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<TokenModel> register(RegisterRequest request) {
+  Future<bool> register(RegisterRequest request) {
     return _authAPI.register(request);
   }
 

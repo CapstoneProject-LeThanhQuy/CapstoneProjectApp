@@ -1,11 +1,18 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:easy_english/base/presentation/base_controller.dart';
 import 'package:easy_english/base/presentation/base_helper.dart';
 import 'package:easy_english/base/presentation/text_to_speech.dart';
 import 'package:easy_english/base/presentation/widgets/common.dart';
+import 'package:easy_english/feature/authentication/data/models/account_model.dart';
+import 'package:easy_english/feature/authentication/data/providers/remote/request/register_request%20.dart';
+import 'package:easy_english/feature/authentication/domain/usecases/register_usecase.dart';
+import 'package:easy_english/utils/config/app_config.dart';
 import 'package:easy_english/utils/config/app_navigation.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/extension/form_builder.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
@@ -35,8 +42,8 @@ class RegisterController extends BaseController {
       false,
     ),
     Message(
-      'Vui lòng nhập mật khẩu cho lần đăng nhập tiếp theo bao gồm tối thiểu 8 ký tự chữ và số',
-      'Please enter a password for the next login consisting of at least 8 alphanumeric characters',
+      'Vui lòng nhập mật khẩu cho lần đăng nhập tiếp theo bao gồm tối thiểu 6 ký tự chữ và số',
+      'Please enter a password for the next login consisting of at least 6 alphanumeric characters',
       true,
       false,
     ),
@@ -80,6 +87,10 @@ class RegisterController extends BaseController {
   final passwordTextEditingController = TextEditingController();
   final confirmPasswordTextEditingController = TextEditingController();
   final scrollController = ScrollController();
+
+  final RegisterUsecase _registerUsecase;
+
+  RegisterController(this._registerUsecase);
 
   @override
   void onInit() {
@@ -596,7 +607,52 @@ class RegisterController extends BaseController {
     }
   }
 
-  void showMessageOTP() {
+  String verificationId = '';
+
+  Future<void> sendOTP() async {
+    // isLoading.value = true;
+    // hideKeyboard();
+    // String phone = emailOrPhoneTextEditingController.text;
+    // if (phone.substring(0, 1) == "0") {
+    //   phone = "+84${phone.substring(1)}";
+    // }
+    // await FirebaseAuth.instance.verifyPhoneNumber(
+    //   phoneNumber: phone,
+    //   verificationCompleted: (PhoneAuthCredential credential) {},
+    //   verificationFailed: (FirebaseAuthException e) {
+    //     // TODO
+    //     // _showToastMessage("Không thể xác thực số điện thoại này.");
+    //     Get.back();
+    //     isLoading.value = false;
+    //   },
+    //   timeout: const Duration(seconds: 20),
+    //   codeSent: (String verificationId, int? resendToken) {
+    //     this.verificationId = verificationId;
+    //     isLoading.value = false;
+    //   },
+    //   codeAutoRetrievalTimeout: (String verificationId) {},
+    // );
+  }
+
+  Future<bool> checkOTP(String otpCode) async {
+    // isLoading.value = true;
+    // hideKeyboard();
+
+    // PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId!, smsCode: otpCode);
+    // var userCredential = await FirebaseAuth.instance.signInWithCredential(credential).catchError((error) {
+    //   // TODO
+    //   // showErrorDialog("Mã xác thực không chính xác");
+    //   isLoading.value = false;
+    // });
+
+    // if (userCredential.user != null) {
+    //   isLoading.value = false;
+    //   return true;
+    // }
+    return false;
+  }
+
+  void showMessageOTP() async {
     BaseHelper.showCustomDialog(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -896,11 +952,64 @@ class RegisterController extends BaseController {
   RxBool isLoading = false.obs;
   void registerLoading() async {
     isLoading.value = true;
-    //TODO register
-    await Future.delayed(const Duration(seconds: 5));
-    isLoading.value = false;
-    currentIndex += 1;
-    nextBotMessage();
+    _registerUsecase.execute(
+      observer: Observer(
+        onSuccess: (token) {
+          AwesomeDialog(
+            context: Get.context!,
+            dialogType: DialogType.success,
+            title: "SUCCESS",
+            desc: "Đăng ký tài khoản thành công",
+            descTextStyle: AppTextStyle.w600s17(ColorName.black000),
+            btnOkText: 'Okay',
+            btnOkOnPress: () {},
+            onDismissCallback: (_) {
+              isLoading.value = false;
+              currentIndex += 1;
+              nextBotMessage();
+            },
+          ).show();
+        },
+        onError: (e) {
+          if (e is DioError) {
+            if (e.response?.data != null) {
+              try {
+                print(e.response!.data['message'].toString());
+                showError(e.response!.data['message'].toString());
+              } catch (e) {
+                print(e.toString());
+                showError(null);
+              }
+            } else {
+              print(e.message ?? 'error');
+              showError(null);
+            }
+          }
+        },
+      ),
+      input: RegisterRequest(
+        emailOrPhone.isEmail ? null : emailOrPhone,
+        emailOrPhone,
+        gender.value == 1 ? true : false,
+        name,
+        password,
+      ),
+    );
+  }
+
+  void showError(String? message) {
+    AwesomeDialog(
+      context: Get.context!,
+      dialogType: DialogType.error,
+      title: "ERROR",
+      desc: message ?? "Đăng ký tài khoản không thành công",
+      descTextStyle: AppTextStyle.w600s17(ColorName.black000),
+      btnOkText: 'Okay',
+      btnOkOnPress: () {},
+      onDismissCallback: (_) {
+        Get.back();
+      },
+    ).show();
   }
 
   void finishRegiter() {
@@ -909,28 +1018,20 @@ class RegisterController extends BaseController {
   }
 
   void goToHomePage() {
-    BaseHelper.showCustomDialog(
-      GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          Get.back();
-          N.toTabBar();
-        },
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // TODO
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    AwesomeDialog(
+      context: Get.context!,
+      dialogType: DialogType.success,
+      title: "SUCCESS",
+      desc: "Bạn đã hoàn tất quá trình đăng ký chuyển đến màn hình đăng nhập để bắt đầu học tập",
+      descTextStyle: AppTextStyle.w600s17(ColorName.black000),
+      btnOkText: 'Okay',
+      btnOkOnPress: () {},
+      onDismissCallback: (_) {
+        AppConfig.accountInfo = AccountModel();
+        N.toLandingPage();
+        N.toLoginPage();
+      },
+    ).show();
   }
 }
 
