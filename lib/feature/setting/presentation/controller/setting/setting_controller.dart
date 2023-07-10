@@ -22,11 +22,18 @@ class SettingController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    loadData();
+  }
+
+  void loadData() {
     accountInfo.value = AppConfig.accountInfo;
+    accountInfo.refresh();
+    refreshController.refreshCompleted();
   }
 
   void onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 300));
+    loadData();
   }
 
   void onLoading() async {

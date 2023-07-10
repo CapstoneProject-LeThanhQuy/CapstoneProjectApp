@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 
-class ForgotPasswordController extends BaseController {
+class ForgotPasswordController extends BaseController<String> {
   final emailOrPhoneTextEditingController = TextEditingController();
 
   final formKey = GlobalKey<FormBuilderState>();

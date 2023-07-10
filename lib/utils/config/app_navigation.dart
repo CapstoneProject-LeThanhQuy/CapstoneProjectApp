@@ -24,8 +24,8 @@ class N {
     type.navigate(name: AppRoute.login);
   }
 
-  static void toForgotPasswordPage({RouteType type = RouteType.to}) {
-    type.navigate(name: AppRoute.forgotPassword);
+  static void toForgotPasswordPage({RouteType type = RouteType.to, String title = "Quên mật khẩu"}) {
+    type.navigate(name: AppRoute.forgotPassword, arguments: title);
   }
 
   static void toForgotPasswordOtpPage({RouteType type = RouteType.to}) {

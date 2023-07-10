@@ -24,6 +24,7 @@ enum FormFieldType {
   reviewWord,
   publicID,
   searchWord,
+  comment,
 }
 
 extension FormFieldTypeExtension on FormFieldType {
@@ -51,6 +52,8 @@ extension FormFieldTypeExtension on FormFieldType {
         return 'Nghĩa';
       case FormFieldType.imageVocabulary:
         return 'Ảnh minh họa';
+      case FormFieldType.comment:
+        return 'Bình luận';
       default:
         return '';
     }
@@ -93,6 +96,8 @@ extension FormFieldTypeExtension on FormFieldType {
         return 'Mã khóa học';
       case FormFieldType.searchWord:
         return 'Tìm kiếm từ vựng';
+      case FormFieldType.comment:
+        return 'Bình luận';
       default:
         return '';
     }
@@ -104,6 +109,7 @@ extension FormFieldTypeExtension on FormFieldType {
         return TextInputType.phone;
       case FormFieldType.memo:
       case FormFieldType.addAutoVocabulary:
+      case FormFieldType.comment:
         return TextInputType.multiline;
       case FormFieldType.number:
         return TextInputType.number;
@@ -163,6 +169,13 @@ extension FormFieldTypeExtension on FormFieldType {
         validators = [
           FormBuilderValidators.required(errorText: 'Không được để trống họ và tên của bạn'),
           FormBuilderValidators.maxLength(25, errorText: 'Họ và tên tối đa 25 ký tự'),
+        ];
+        break;
+
+      case FormFieldType.comment:
+        validators = [
+          FormBuilderValidators.required(errorText: 'Không được để trống bình luận'),
+          FormBuilderValidators.maxLength(1000, errorText: 'Họ và tên tối đa 1000 ký tự'),
         ];
         break;
       case FormFieldType.title:

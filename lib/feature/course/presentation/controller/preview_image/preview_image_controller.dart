@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_english/base/presentation/base_controller.dart';
 import 'package:easy_english/base/presentation/base_widget.dart';
 import 'package:easy_english/feature/course/presentation/controller/create_vocabulary/create_vocabulary_controller.dart';
+import 'package:easy_english/feature/game/presentation/controller/game/game_controller.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
 import 'package:get/get.dart';
@@ -27,8 +28,14 @@ class PreviewImageController extends BaseController<ImagePreviewitem> {
   }
 
   void selectImage(int index) {
-    var createVocabularyController = Get.find<CreateVocabularyController>();
-    createVocabularyController.setImageVocabulary(imagePreview.urls?[index] ?? '');
+    if (Get.isRegistered<CreateVocabularyController>()) {
+      var createVocabularyController = Get.find<CreateVocabularyController>();
+      createVocabularyController.setImageVocabulary(imagePreview.urls?[index] ?? '');
+    } else if (Get.isRegistered<GameController>()) {
+      var gameController = Get.find<GameController>();
+      gameController.setImageVocabulary(imagePreview.urls?[index] ?? '');
+    }
+
     Get.back();
   }
 }

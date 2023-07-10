@@ -2,12 +2,15 @@ import 'package:dart_json_mapper/dart_json_mapper.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_english/feature/course/data/models/course_download_model.dart';
 import 'package:easy_english/feature/course/data/models/course_model.dart';
+import 'package:easy_english/feature/course/data/models/follow_model.dart';
 import 'package:easy_english/feature/course/data/models/list_course_model.dart';
 import 'package:easy_english/feature/course/data/models/list_vocabulary_model.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/create_course_request.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/follow_course_request.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/get_all_course_request.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/get_vocabulary_from_url_request.dart';
+import 'package:easy_english/feature/course/data/providers/remote/request/learing_course_request.dart';
+import 'package:easy_english/feature/course/data/providers/remote/request/rate_course_request.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/update_course_request.dart';
 import 'package:retrofit/http.dart';
 
@@ -43,4 +46,13 @@ abstract class CourseAPI {
 
   @GET('/course/course-by-public-id')
   Future<ListCourseModel> getCourseWithPublicId(@Query('course_id') String request);
+
+  @GET('/course/all-follow')
+  Future<FollowModel> getAllFollow(@Query('course_id') String request);
+
+  @POST('/course/rate')
+  Future<bool> rateCourse(@Body() RateCourseRequest request);
+
+  @POST('/course/learing')
+  Future<bool> learingCourse(@Body() LearingCourseRequest request);
 }

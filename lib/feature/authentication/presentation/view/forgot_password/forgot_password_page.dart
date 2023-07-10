@@ -16,7 +16,7 @@ class ForgotPasswordPage extends BaseWidget<ForgotPasswordController> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: BaseAppBar(
-          title: const Text('Quên mật khẩu'),
+          title: Text(controller.input),
         ),
         body: Obx(
           () => IgnorePointer(

@@ -10,17 +10,24 @@ import 'package:easy_english/base/presentation/base_controller.dart';
 import 'package:easy_english/base/presentation/base_helper.dart';
 import 'package:easy_english/feature/course/data/models/course_level.dart';
 import 'package:easy_english/feature/course/data/models/course_model.dart';
+import 'package:easy_english/feature/course/data/models/follow_model.dart';
 import 'package:easy_english/feature/course/data/models/vocabulary.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/follow_course_request.dart';
+import 'package:easy_english/feature/course/data/providers/remote/request/rate_course_request.dart';
 import 'package:easy_english/feature/course/domain/usecases/download_course_with_id_usecase.dart';
 import 'package:easy_english/feature/course/domain/usecases/follow_course_usecase.dart';
+import 'package:easy_english/feature/course/domain/usecases/get_all_follow_usecase.dart';
+import 'package:easy_english/feature/course/domain/usecases/rate_course_usecase.dart';
 import 'package:easy_english/feature/course/presentation/controller/course/course_controller.dart';
+import 'package:easy_english/feature/home/data/models/rank.dart';
 import 'package:easy_english/feature/home/presentation/controller/home/home_controller.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
 import 'package:easy_english/utils/gen/colors.gen.dart';
 import 'package:easy_english/utils/simpletreeview/lib/flutter_simple_treeview.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomeCourseDetailController extends BaseController<CourseModel> {
   final FollowCourseUsecase _followCourseUsecase;
@@ -28,6 +35,8 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
   final CreateCourseLocalUsecase _createCourseLocalUsecase;
   final CreateVocabulariesLocalUsecase _createVocabulariesLocalUsecase;
   final CreateCourseLevelLocalUsecase _createCourseLevelLocalUsecase;
+  final GetAllFollowUsecase _getAllFollowUsecase;
+  final RateCourseUsecase _rateCourseUsecase;
 
   HomeCourseDetailController(
     this._followCourseUsecase,
@@ -35,8 +44,13 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
     this._createCourseLocalUsecase,
     this._createVocabulariesLocalUsecase,
     this._createCourseLevelLocalUsecase,
+    this._getAllFollowUsecase,
+    this._rateCourseUsecase,
   );
 
+  final formKey = GlobalKey<FormBuilderState>();
+
+  TextEditingController commentTextEditingController = TextEditingController();
   Rx<CourseModel> course = CourseModel().obs;
   bool isPrivateCourse = false;
   RxBool isLoading = false.obs;
@@ -52,6 +66,24 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
   ScrollController scrollController = ScrollController();
 
   RxBool isFollow = false.obs;
+
+  RxList<Rank> listRank = RxList.empty();
+  RxList<Follow> listRate = RxList.empty();
+  RxDouble rate = 0.0.obs;
+
+  RxBool viewFull = false.obs;
+
+  final refreshController = RefreshController(initialRefresh: false);
+
+  void onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    loadData();
+  }
+
+  void onLoading() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    refreshController.loadComplete();
+  }
 
   @override
   void onInit() {
@@ -100,6 +132,7 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
           }
           isLoading.value = false;
           mappingData(null);
+          refreshController.refreshCompleted();
         },
         onError: (e) {
           if (e is DioError) {
@@ -122,6 +155,67 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
       ),
       input: '${input.id}',
     );
+
+    _getAllFollowUsecase.execute(
+      observer: Observer(
+        onSubscribe: () {
+          isLoading.value = true;
+        },
+        onSuccess: (response) async {
+          setRankAndRate(response);
+        },
+        onError: (e) {
+          if (e is DioError) {
+            BaseHelper.tokenError(e);
+            if (e.response?.data != null) {
+              try {
+                _showToastMessage(e.response!.data['message'].toString());
+              } catch (e) {
+                _showToastMessage(e.toString());
+              }
+            } else {
+              _showToastMessage(e.message ?? 'error');
+            }
+          }
+          if (kDebugMode) {
+            print(e.toString());
+          }
+          isLoading.value = false;
+        },
+      ),
+      input: '${input.id}',
+    );
+  }
+
+  void setRankAndRate(List<Follow> listFollow) {
+    if (listFollow.isEmpty) {
+      return;
+    }
+    listFollow.sort((a, b) => b.rating.compareTo(a.rating));
+    listRate.value = listFollow.where((element) => element.rating != 0).toList();
+    listRate.refresh();
+    var total = 0;
+    for (var follow in listRate) {
+      total = total + follow.rating;
+    }
+    if (listRate.isEmpty) {
+      rate.value = 0;
+    } else {
+      rate.value = total / listRate.length;
+    }
+
+    listFollow.sort((a, b) => b.point.compareTo(a.point));
+    listRank.value = listFollow
+        .map(
+          (e) => Rank(
+            point: e.point,
+            username: e.userName,
+            dificult: e.difficultWords,
+            learned: e.learnedWords,
+          ),
+        )
+        .toList();
+    listRank.refresh();
   }
 
   void onSearch(String key) {
@@ -249,7 +343,6 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
   void downloadCourse() async {
     int count = 0;
     isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 1000));
     _createCourseLocalUsecase.execute(
       observer: Observer(
         onSuccess: (val) {
@@ -268,7 +361,7 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
                               Get.find<CourseController>().onRefresh();
                             }
                             Get.find<HomeController>().onRefresh();
-
+                            Get.back();
                             AwesomeDialog(
                               context: Get.context!,
                               dialogType: DialogType.success,
@@ -340,6 +433,32 @@ class HomeCourseDetailController extends BaseController<CourseModel> {
         member: course.value.member ?? 0,
         point: 0,
       ),
+    );
+  }
+
+  RxString currentRate = '5. Rất hài lòng'.obs;
+  void rateCourse() {
+    String comment = commentTextEditingController.text.trim();
+    int currentRateNumber = int.parse(currentRate.replaceAll(RegExp(r'[^0-9]'), ''));
+    if (comment.isEmpty) {
+      comment = currentRate.value;
+    }
+
+    Get.back();
+    isLoading.value = true;
+    _rateCourseUsecase.execute(
+      observer: Observer(
+        onSuccess: (val) {
+          loadData();
+        },
+        onError: (e) {
+          isLoading.value = false;
+          print(e);
+          _showToastMessage('Đánh giá thất bại\nTham gia khóa học mới có thể đánh giá');
+          return;
+        },
+      ),
+      input: RateCourseRequest(course.value.id, currentRateNumber, comment),
     );
   }
 }

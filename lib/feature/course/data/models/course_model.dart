@@ -14,6 +14,7 @@ class CourseModel {
   String? publicId;
   int? userId;
   String? password;
+  String? userName;
 
   CourseModel({
     this.id,
@@ -27,6 +28,7 @@ class CourseModel {
     this.publicId,
     this.userId,
     this.password,
+    this.userName,
   });
 
   Map<String, dynamic> toJsonView() {
@@ -41,6 +43,7 @@ class CourseModel {
       'rating': rating,
       'publicId': publicId,
       'userId': userId,
+      'userName': userName,
       'password': password,
     };
   }
@@ -61,6 +64,7 @@ class CourseModel {
     return CourseModel(
       id: json["id"],
       userId: json["user_id"],
+      userName: json["user_name"],
       publicId: json["public_id"],
       title: json["title"],
       description: json["description"],

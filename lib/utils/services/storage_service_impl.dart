@@ -7,6 +7,7 @@ class StorageServiceImpl implements StorageService {
   final String targetKey = "TARGET_KEY";
   final String currentCourseKey = "CURRENT_COURSE_KEY";
   final String myWordsKey = "MY_WORDS_KEY";
+  final String myBestScore = "MY_BEST_SCORE_KEY";
 
   @override
   Future<void> setToken(String token) async {
@@ -24,13 +25,13 @@ class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<String> getTarget() async {
-    return (await _sharedPreferences).getString(targetKey) ?? "";
+  Future<String> getTarget(int userId) async {
+    return (await _sharedPreferences).getString('$targetKey-$userId') ?? "";
   }
 
   @override
-  Future<void> setTarget(String target) async {
-    (await _sharedPreferences).setString(targetKey, target);
+  Future<void> setTarget(String target, int userId) async {
+    (await _sharedPreferences).setString('$targetKey-$userId', target);
   }
 
   @override
@@ -49,12 +50,27 @@ class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<void> setMyWord(String myWords) async {
-    (await _sharedPreferences).setString(myWordsKey, myWords);
+  Future<void> setMyWord(List<String> myWords) async {
+    (await _sharedPreferences).setStringList(myWordsKey, myWords);
   }
 
   @override
-  Future<String> getMyWord() async {
-    return (await _sharedPreferences).getString(myWordsKey) ?? "";
+  Future<List<String>> getMyWord() async {
+    return (await _sharedPreferences).getStringList(myWordsKey) ?? [];
+  }
+
+  @override
+  Future<void> removeMyWord() async {
+    (await _sharedPreferences).remove(myWordsKey);
+  }
+
+  @override
+  Future<int> getMyBestScore() async {
+    return (await _sharedPreferences).getInt(myBestScore) ?? 0;
+  }
+
+  @override
+  Future<void> setMyBestScore(int bestScore) async {
+    (await _sharedPreferences).setInt(myBestScore, bestScore);
   }
 }

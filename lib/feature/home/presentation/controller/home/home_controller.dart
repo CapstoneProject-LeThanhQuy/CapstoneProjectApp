@@ -14,6 +14,7 @@ import 'package:easy_english/feature/course/data/providers/remote/request/get_al
 import 'package:easy_english/feature/course/domain/usecases/get_all_course_usecase.dart';
 import 'package:easy_english/feature/course/domain/usecases/get_course_with_public_id_usecase.dart';
 import 'package:easy_english/feature/home/data/models/target.dart';
+import 'package:easy_english/feature/setting/presentation/controller/setting/setting_controller.dart';
 import 'package:easy_english/utils/config/app_config.dart';
 import 'package:easy_english/utils/config/app_navigation.dart';
 import 'package:easy_english/utils/config/app_text_style.dart';
@@ -114,8 +115,13 @@ class HomeController extends BaseController {
     _storageService.getCurrentCourse().then(
       (value) {
         if (value.isNotEmpty) {
-          print(jsonDecode(value));
-          curentCourse = Course.fromJson(jsonDecode(value)).obs;
+          var responseCourse = Course.fromJson(jsonDecode(value));
+          print(responseCourse.toJson());
+          if (responseCourse.userId != AppConfig.accountInfo.id) {
+            return;
+          }
+          curentCourse = responseCourse.obs;
+          curentCourse.refresh();
           _getVocabulariesWithCourseLocalUsecase.execute(
             observer: Observer(
               onSuccess: (val) async {
@@ -151,7 +157,7 @@ class HomeController extends BaseController {
 
   void getDataTarget() {
     // _storageService.removeTarget();
-    _storageService.getTarget().then(
+    _storageService.getTarget(AppConfig.accountInfo.id ?? 0).then(
       (value) {
         int timeNow = DateTime.now().toUtc().millisecondsSinceEpoch;
         if (value.isNotEmpty) {
@@ -177,6 +183,7 @@ class HomeController extends BaseController {
               listReviewedWordsTime: [],
               listNewWordsTime: [],
             ).toJson().toString(),
+            AppConfig.accountInfo.id ?? 0,
           );
         }
 
@@ -210,7 +217,10 @@ class HomeController extends BaseController {
             listReviewedWordsTime: [],
             listNewWordsTime: [],
           ).obs;
-          _storageService.setTarget(target.value.toJson().toString());
+          _storageService.setTarget(
+            target.value.toJson().toString(),
+            AppConfig.accountInfo.id ?? 0,
+          );
         }
       },
     );
@@ -221,11 +231,10 @@ class HomeController extends BaseController {
     AppConfig.isSpeakLearn = false;
     getDataTarget();
     getCurrentCourse();
+    Get.find<SettingController>().loadData();
     _getCourseLocalUsecase.execute(
       observer: Observer(
         onSuccess: (val) async {
-          await Future.delayed(const Duration(milliseconds: 1000));
-
           if (kDebugMode) {
             print('Gettttttttttttttttttttttttttt');
             print(val);
@@ -255,7 +264,6 @@ class HomeController extends BaseController {
       observer: Observer(
         onSubscribe: () {},
         onSuccess: (courses) async {
-          await Future.delayed(const Duration(milliseconds: 1000));
           isLoading.value = false;
           if (courses.isEmpty) {
             isEnd = true;
@@ -293,6 +301,7 @@ class HomeController extends BaseController {
   }
 
   void toCourseDetail(int index) {
+    AppConfig.currentViewDetail.value = StypeViewDetail.normal;
     N.toHomeCourseDetail(courseModel: listCourse[index]);
   }
 
@@ -368,7 +377,10 @@ class HomeController extends BaseController {
   void updateTarget(int numberTarget) {
     target.value.targetWord = numberTarget;
     target.refresh();
-    _storageService.setTarget(target.value.toJson().toString());
+    _storageService.setTarget(
+      target.value.toJson().toString(),
+      AppConfig.accountInfo.id ?? 0,
+    );
   }
 
   RxBool isSearching = false.obs;
@@ -379,7 +391,6 @@ class HomeController extends BaseController {
       observer: Observer(
         onSubscribe: () {},
         onSuccess: (courses) async {
-          await Future.delayed(const Duration(milliseconds: 1000));
           isLoading.value = false;
           isEnd = true;
           listCourse.addAll(courses);

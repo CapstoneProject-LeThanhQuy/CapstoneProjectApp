@@ -6,6 +6,7 @@ import 'package:easy_english/feature/course/data/models/course_model.dart';
 import 'package:easy_english/feature/course/data/providers/remote/request/get_all_course_request.dart';
 import 'package:easy_english/feature/course/domain/usecases/get_all_course_follow_usecase.dart';
 import 'package:easy_english/feature/course/domain/usecases/get_all_course_usecase.dart';
+import 'package:easy_english/utils/config/app_config.dart';
 import 'package:easy_english/utils/config/app_navigation.dart';
 import 'package:easy_english/utils/extension/route_type.dart';
 import 'package:flutter/foundation.dart';
@@ -58,7 +59,6 @@ class CourseController extends BaseController {
     _getCourseLocalUsecase.execute(
       observer: Observer(
         onSuccess: (val) async {
-          await Future.delayed(const Duration(milliseconds: 1000));
           isLoading1.value = false;
           if (kDebugMode) {
             print('Gettttttttttttttttttttttttttt');
@@ -89,7 +89,6 @@ class CourseController extends BaseController {
     _getAllCourseUsecase.execute(
       observer: Observer(
         onSuccess: (val) async {
-          await Future.delayed(const Duration(milliseconds: 1000));
           isLoading2.value = false;
           if (kDebugMode) {
             print(val);
@@ -110,6 +109,9 @@ class CourseController extends BaseController {
                 ),
               )
               .toList();
+          for (var course in myCourses) {
+            localCourses.removeWhere((element) => element.id == course.id);
+          }
         },
         onError: (e) {
           isLoading2.value = false;
@@ -123,7 +125,6 @@ class CourseController extends BaseController {
     _getAllCourseFollowUsecase.execute(
       observer: Observer(
         onSuccess: (val) async {
-          await Future.delayed(const Duration(milliseconds: 1000));
           if (kDebugMode) {
             print(val);
           }
@@ -171,6 +172,29 @@ class CourseController extends BaseController {
 
   void toCourseDetail(int index) {
     Course course = followCourses[index];
+    AppConfig.currentViewDetail.value = StypeViewDetail.normal;
+    N.toHomeCourseDetail(
+      courseModel: CourseModel(
+        id: course.id,
+        title: course.title,
+      ),
+    );
+  }
+
+  void toCourseDetailMyCourse(int index) {
+    Course course = myCourses[index];
+    AppConfig.currentViewDetail.value = StypeViewDetail.myCourse;
+    N.toHomeCourseDetail(
+      courseModel: CourseModel(
+        id: course.id,
+        title: course.title,
+      ),
+    );
+  }
+
+  void toCourseDetailFollow(int index) {
+    Course course = localCourses[index];
+    AppConfig.currentViewDetail.value = StypeViewDetail.followCourse;
     N.toHomeCourseDetail(
       courseModel: CourseModel(
         id: course.id,
